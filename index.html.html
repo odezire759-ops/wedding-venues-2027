@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wedding Planner · O & Ae 2027</title>
+<style>
+  :root{
+    --bg:#ffffff; --card:#ffffff; --line:#e9e6e1; --ink:#1c1917; --ink2:#6b6560;
+    --gold:#8a6d3b; --gold-soft:#f5efe4; --rose:#c98a8a;
+    --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --neutral:#d6d3ce; --danger:#e34948;
+    --green:#0c6b46; --amber:#b34a17;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Sarabun','Prompt','Segoe UI',sans-serif;background:var(--bg);color:var(--ink);font-size:17px;line-height:1.6}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+
+  header{border-bottom:1px solid var(--line);padding:20px 0 0;position:sticky;top:0;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);z-index:50}
+  .head-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  h1{font-size:24px;font-weight:800;letter-spacing:-.3px}
+  h1 small{font-weight:500;color:var(--ink2);font-size:15px}
+  .countpill{margin-left:auto;background:var(--gold-soft);color:var(--gold);font-weight:700;font-size:15px;border-radius:99px;padding:6px 18px}
+  #saveState{font-size:13px;color:var(--ink2);min-width:110px;text-align:right}
+  #saveState.saving{color:var(--amber)} #saveState.saved{color:var(--green)} #saveState.error{color:var(--danger)}
+  .tabs{display:flex;gap:26px;margin-top:16px;overflow-x:auto}
+  .tabs button{border:none;background:none;font-family:inherit;font-size:16.5px;font-weight:600;color:var(--ink2);padding:12px 2px;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+  .tabs button.on{color:var(--ink);border-color:var(--gold)}
+
+  main{padding:30px 0 80px}
+  .hidden{display:none!important}
+  h2.sec{font-size:20px;font-weight:800;margin:34px 0 6px}
+  h2.sec:first-child{margin-top:0}
+  p.sub{color:var(--ink2);font-size:15px;margin-bottom:18px}
+
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+  .kpi{border:1px solid var(--line);border-radius:16px;padding:20px 22px}
+  .kpi .lab{font-size:14px;color:var(--ink2);font-weight:600}
+  .kpi .val{font-size:40px;font-weight:800;letter-spacing:-1px;margin:2px 0}
+  .kpi .val small{font-size:19px;font-weight:600;color:var(--ink2)}
+  .kpi .delta{font-size:13.5px;color:var(--ink2)}
+  .kpi.hero{background:linear-gradient(140deg,#fdf9f2,#f7efdf);border-color:#e8dcc3}
+  .kpi.hero .val{color:var(--gold);font-size:48px}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:stretch}
+  @media(max-width:820px){.grid2{grid-template-columns:1fr}}
+  .card{border:1px solid var(--line);border-radius:16px;padding:22px 24px}
+  .card h3{font-size:17px;font-weight:700;margin-bottom:14px}
+
+  .donutrow{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+  .legend{display:flex;flex-direction:column;gap:9px;font-size:15px;min-width:180px}
+  .legend .li{display:flex;align-items:center;gap:9px}
+  .dot{width:13px;height:13px;border-radius:4px;flex:none}
+  .legend b{margin-left:auto;padding-left:16px}
+
+  .meter{height:22px;background:#f1efeb;border-radius:12px;overflow:hidden;position:relative;margin:10px 0 6px}
+  .meter .fill{height:100%;background:var(--gold);border-radius:12px 4px 4px 12px;transition:width .4s}
+  .meter.over .fill{background:var(--danger)}
+  .meternote{font-size:14px;color:var(--ink2)}
+
+  .controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;border:1px solid var(--line);border-radius:16px;padding:18px 20px;background:#fbfaf8}
+  .ctl label{display:block;font-size:13.5px;font-weight:700;color:var(--ink2);margin-bottom:5px}
+  .ctl input,.ctl select{width:100%;font-family:inherit;font-size:18px;font-weight:700;padding:9px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+  .ctl input:focus{outline:none;border-color:var(--gold)}
+  .seg{display:flex;border:1.5px solid var(--line);border-radius:10px;overflow:hidden}
+  .seg button{flex:1;border:none;background:#fff;font-family:inherit;font-size:15px;font-weight:700;padding:10px 4px;cursor:pointer;color:var(--ink2)}
+  .seg button.on{background:var(--ink);color:#fff}
+
+  .hbar{display:grid;grid-template-columns:170px 1fr 120px;gap:14px;align-items:center;margin:14px 0}
+  .hbar .nm{font-size:15.5px;font-weight:700;text-align:right;cursor:pointer}
+  .hbar .nm small{display:block;font-weight:500;color:var(--ink2);font-size:12.5px}
+  .hbar.sel .nm{color:var(--gold)}
+  .track{height:34px;background:#f4f2ee;border-radius:8px;position:relative}
+  .bfill{height:100%;border-radius:8px 4px 4px 8px;background:var(--gold);min-width:4px;position:relative;transition:width .4s}
+  .bfill.over{background:var(--danger)}
+  .bval{position:absolute;left:calc(100% + 10px);top:50%;transform:translateY(-50%);font-size:15px;font-weight:800;white-space:nowrap}
+  .fitbadge{font-size:13px;font-weight:700;border-radius:8px;padding:4px 10px;text-align:center}
+  .fit-ok{background:#e9f4ee;color:var(--green)}
+  .fit-no{background:#fdecec;color:#b12a29}
+  .budgetline{position:absolute;top:-8px;bottom:-8px;width:0;border-left:2.5px dashed var(--ink);opacity:.55}
+  .budgetline span{position:absolute;top:-22px;left:-18px;font-size:12px;font-weight:700;color:var(--ink)}
+
+  .breakrow{display:flex;gap:26px;align-items:center;flex-wrap:wrap;margin-top:8px}
+  .fine{font-size:13.5px;color:var(--ink2);border-top:1px dashed var(--line);margin-top:18px;padding-top:12px}
+
+  /* timeline */
+  .tl-period{margin-bottom:26px}
+  .tl-head{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+  .tl-head h3{font-size:18.5px;font-weight:800}
+  .tl-head .bar{flex:1;height:9px;background:#f1efeb;border-radius:6px;overflow:hidden;max-width:220px}
+  .tl-head .bar i{display:block;height:100%;background:var(--s1);border-radius:6px}
+  .tl-head span{font-size:14px;color:var(--ink2);font-weight:600}
+  .titem{display:grid;grid-template-columns:auto 1fr auto auto auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin-bottom:10px}
+  @media(max-width:760px){.titem{grid-template-columns:auto 1fr auto;gap:10px}.titem .t-owner,.titem .t-due{grid-column:2;justify-self:start;margin-top:-4px}}
+  .titem:hover{border-color:#d8d2c8}
+  .chk{width:26px;height:26px;border-radius:8px;border:2px solid #cfc9c0;flex:none;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;cursor:pointer;background:#fff;transition:.15s}
+  .chk:hover{border-color:var(--gold)}
+  .titem.done .chk{background:var(--s1);border-color:var(--s1)}
+  .titem.done .t-name input{text-decoration:line-through;color:#a09a92}
+  .t-name input{width:100%;border:1px solid transparent;background:transparent;font-family:inherit;font-size:16px;font-weight:600;padding:6px;border-radius:6px;color:var(--ink)}
+  .t-name input:focus{outline:none;border-color:var(--gold);background:#fffdf5}
+  .t-name small{display:block;font-weight:500;color:var(--ink2);font-size:13px;padding:0 6px}
+  .t-owner input{width:110px;border:1px solid var(--line);background:#fff;font-family:inherit;font-size:14px;padding:5px 8px;border-radius:6px;color:var(--ink)}
+  .t-owner input:focus{outline:none;border-color:var(--gold)}
+  .t-owner input::placeholder{color:#c9c3ba}
+  .chip-sel{font-size:13px;font-weight:700;border-radius:8px;padding:5px 10px;border:none;font-family:inherit;cursor:pointer}
+  .st-todo{background:#f1efeb;color:var(--ink2)}
+  .st-doing{background:#fdeee6;color:var(--amber)}
+  .st-done{background:#e7f0fa;color:#1e5da8}
+  .st-skip{background:#f4f2ee;color:#9b9691}
+  .del{border:none;background:transparent;color:#c9b8a5;cursor:pointer;font-size:16px;padding:4px 6px;border-radius:6px}
+  .del:hover{color:var(--danger);background:#fdecec}
+  .due{font-size:13px;color:var(--ink2);white-space:nowrap}
+  .due.red{color:var(--danger);font-weight:700}
+  .sug{font-size:10.5px;background:#f9e5ea;color:#8f3557;border-radius:5px;padding:1px 6px;margin-left:6px;font-weight:700}
+  .btn{font-family:inherit;font-size:14px;font-weight:700;border:1.5px dashed var(--gold);color:var(--gold);background:transparent;border-radius:10px;padding:8px 14px;cursor:pointer}
+  .btn:hover{background:var(--gold-soft)}
+  .btn.solid{background:var(--gold);color:#fff;border-style:solid}
+
+  /* calendar */
+  .calwrap{display:grid;grid-template-columns:1.4fr 1fr;gap:16px}
+  @media(max-width:860px){.calwrap{grid-template-columns:1fr}}
+  .calhead{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .calhead h3{font-size:19px;font-weight:800;flex:1;text-align:center}
+  .calnav{border:1.5px solid var(--line);background:#fff;border-radius:10px;width:38px;height:38px;font-size:17px;cursor:pointer;font-family:inherit}
+  .calnav:hover{background:var(--gold-soft)}
+  .calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+  .dow{font-size:13px;font-weight:700;color:var(--ink2);text-align:center;padding:4px 0}
+  .day{border:1px solid var(--line);border-radius:12px;min-height:76px;padding:6px 8px;cursor:pointer;position:relative;background:#fff}
+  .day:hover{border-color:var(--gold);background:#fffdf8}
+  .day.today{border:2px solid var(--gold);background:var(--gold-soft)}
+  .day.wed{background:#fdf3f3;border-color:#efb9b9}
+  .day .dn{font-size:14px;font-weight:700}
+  .day .wedlab{font-size:10.5px;color:#b12a29;font-weight:800}
+  .evdot{display:block;font-size:10.5px;font-weight:700;border-radius:6px;padding:1px 6px;margin-top:3px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .aplist .ap{display:flex;gap:12px;border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:10px;align-items:center}
+  .apdate{flex:none;width:56px;text-align:center;background:var(--gold-soft);border-radius:10px;padding:7px 4px}
+  .apdate b{display:block;font-size:20px;color:var(--gold);line-height:1.1}
+  .apdate span{font-size:11.5px;color:var(--ink2);font-weight:700}
+  .apbody{flex:1;min-width:0}
+  .apbody .t{font-size:15px;font-weight:700;overflow:hidden;text-overflow:ellipsis}
+  .apbody small{color:var(--ink2);font-size:13px}
+  .apcat{font-size:11.5px;font-weight:800;border-radius:7px;padding:3px 8px;color:#fff;white-space:nowrap}
+  .apactions{display:flex;flex-direction:column;gap:4px}
+  .apactions button{border:none;background:transparent;cursor:pointer;font-size:14px;padding:3px 6px;color:var(--ink2);border-radius:6px}
+  .apactions button:hover{background:#f4f2ee}
+  .addform{border:1.5px dashed var(--gold);border-radius:14px;padding:14px 16px;margin-top:12px;background:#fffdf8}
+  .addform .row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+  .addform input,.addform select{width:100%;font-family:inherit;font-size:15px;padding:8px 10px;border:1.5px solid var(--line);border-radius:9px;background:#fff}
+  .addform button{font-family:inherit;font-size:15px;font-weight:700;background:var(--gold);color:#fff;border:none;border-radius:10px;padding:9px 22px;cursor:pointer}
+
+  /* guests */
+  .filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+  .filters select,.filters input{font-family:inherit;font-size:14px;padding:8px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff}
+  .gcard{display:grid;grid-template-columns:44px 1fr auto auto auto;gap:14px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin-bottom:10px}
+  @media(max-width:760px){.gcard{grid-template-columns:44px 1fr auto;gap:10px}.gcard .g-events,.gcard .g-rsvp{grid-column:2;justify-self:start}}
+  .avatar{width:44px;height:44px;border-radius:50%;background:var(--gold-soft);color:var(--gold);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;flex:none}
+  .g-name{min-width:0}
+  .g-name input{width:100%;border:1px solid transparent;background:transparent;font-family:inherit;font-size:16px;font-weight:700;padding:4px;border-radius:6px;color:var(--ink)}
+  .g-name input:focus{outline:none;border-color:var(--gold);background:#fffdf5}
+  .g-name .meta{display:flex;gap:6px;flex-wrap:wrap;padding:0 4px;margin-top:2px}
+  .g-name .meta select,.g-name .meta input{border:1px solid var(--line);background:#fafaf9;font-family:inherit;font-size:12.5px;padding:3px 8px;border-radius:6px;color:var(--ink2)}
+  .g-name .meta input[type=number]{width:60px}
+  .evtags{display:flex;gap:6px}
+  .evtag{font-size:12.5px;border:1.5px solid var(--line);border-radius:99px;padding:3px 11px;color:var(--ink2);font-weight:600;cursor:pointer;user-select:none}
+  .evtag.on{background:var(--gold-soft);border-color:#d9c9a8;color:var(--gold)}
+  .g-rsvp select{border:1.5px solid var(--line);background:#fff;font-family:inherit;font-size:13px;font-weight:700;padding:6px 10px;border-radius:8px;color:var(--ink)}
+
+  /* settings */
+  .setgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:720px}
+  @media(max-width:640px){.setgrid{grid-template-columns:1fr}}
+  .sfield label{display:block;font-size:14px;font-weight:700;color:var(--ink2);margin-bottom:6px}
+  .sfield input{width:100%;font-family:inherit;font-size:18px;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px}
+  .sfield input:focus{outline:none;border-color:var(--gold)}
+  .linknote{grid-column:1/-1;background:var(--gold-soft);border-radius:12px;padding:14px 18px;font-size:14.5px;color:#6d5628;line-height:1.7}
+  #loading{text-align:center;padding:60px 0;color:var(--ink2)}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="head-top">
+    <h1>💍 Wedding Planner <small id="coupleNames">· O & Ae 2027</small></h1>
+    <div id="countdown" class="countpill">⏳ กำลังโหลด...</div>
+    <div id="saveState"></div>
+  </div>
+  <div class="tabs">
+    <button class="on" onclick="tab(this,'vHome')">🏠 ภาพรวม</button>
+    <button onclick="tab(this,'vHotel')">🏨 โรงแรม & งบ</button>
+    <button onclick="tab(this,'vTl')">📋 ไทม์ไลน์</button>
+    <button onclick="tab(this,'vCal')">📅 นัดหมาย</button>
+    <button onclick="tab(this,'vG')">👥 แขก</button>
+    <button onclick="tab(this,'vSet')">⚙️ ตั้งค่า</button>
+  </div>
+</div></header>
+
+<main><div class="wrap">
+
+<div id="loading">⏳ กำลังโหลดข้อมูลจาก Supabase...</div>
+
+<!-- DASHBOARD -->
+<div id="vHome" class="hidden">
+  <div class="kpis" id="kpiRow"></div>
+  <div class="grid2" style="margin-top:16px">
+    <div class="card"><h3>ความคืบหน้างานทั้งหมด</h3>
+      <div class="donutrow"><svg id="donutTasks" width="170" height="170" viewBox="0 0 170 170"></svg><div class="legend" id="legTasks"></div></div>
+    </div>
+    <div class="card"><h3>การตอบรับของแขก · งานเลี้ยง</h3>
+      <div class="donutrow"><svg id="donutRsvp" width="170" height="170" viewBox="0 0 170 170"></svg><div class="legend" id="legRsvp"></div></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h3>งบประมาณ</h3>
+    <div id="budgetInfo"></div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h3>นัดหมายที่กำลังจะถึง</h3>
+    <div id="upcomingAps"></div>
+  </div>
+</div>
+
+<!-- HOTEL & BUDGET -->
+<div id="vHotel" class="hidden">
+  <h2 class="sec">โรงแรม & งบประมาณ</h2>
+  <p class="sub">ตัวเลขคำนวณสดจากจำนวนแขก + เมนู · เลื่อนดูว่าโรงแรมไหนอยู่ในงบ (เส้นประ = งบที่ตั้งไว้) · คลิกชื่อโรงแรมเพื่อเลือก</p>
+  <div class="controls">
+    <div class="ctl"><label>💍 แขกงานหมั้น (คน)</label><input id="iEng" type="number" min="0"></div>
+    <div class="ctl"><label>🥂 แขกงานเลี้ยง (คน)</label><input id="iRec" type="number" min="0"></div>
+    <div class="ctl"><label>💰 งบประมาณ (บาท)</label><input id="iBud" type="number" step="10000"></div>
+    <div class="ctl"><label>เมนูงานเลี้ยง</label>
+      <div class="seg"><button id="mB" onclick="setMenuType('buffet')">บุฟเฟต์</button><button id="mC" onclick="setMenuType('chinese')">โต๊ะจีน</button></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h3>ประมาณการค่าใช้จ่ายรวม (หมั้น + เลี้ยง) ต่อโรงแรม</h3>
+    <div id="hotelBars" style="position:relative;padding-right:110px"></div>
+    <div class="fine">ราคา net จากใบเสนอราคาจริง · แขกหมั้นเกิน 50 คนคิดค่า coffee break เพิ่มต่อหัว · โต๊ะจีนคิดโต๊ะละ 10 ท่าน (ปัดขึ้น) · ค่าเบียร์/ไวน์/เค้ก/ดอกไม้เสริมไม่รวมในตัวเลขนี้</div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h3 id="breakTitle">โครงสร้างค่าใช้จ่าย</h3>
+    <div class="breakrow"><svg id="pieBreak" width="190" height="190" viewBox="0 0 190 190"></svg><div class="legend" id="legBreak"></div></div>
+  </div>
+</div>
+
+<!-- TIMELINE -->
+<div id="vTl" class="hidden">
+  <h2 class="sec">ไทม์ไลน์</h2>
+  <p class="sub">ติ๊กเสร็จได้ทันที · แถบความคืบหน้าต่อช่วง · วันที่แนะนำคำนวณจากวันแต่งงาน (แก้ในแท็บตั้งค่า)</p>
+  <div class="filters">
+    <select id="fCat" onchange="renderTasks()"><option value="">ทุกหมวด</option></select>
+    <select id="fStatus" onchange="renderTasks()">
+      <option value="">ทุกสถานะ</option><option>ยังไม่เริ่ม</option><option>กำลังทำ</option><option>เสร็จแล้ว</option><option>ข้าม</option>
+    </select>
+    <input id="fSearch" type="text" placeholder="🔍 ค้นหา..." oninput="renderTasks()">
+  </div>
+  <div id="taskList"></div>
+</div>
+
+<!-- CALENDAR -->
+<div id="vCal" class="hidden">
+  <h2 class="sec">นัดหมาย</h2>
+  <p class="sub">นัดดูสถานที่ ชิมอาหาร ร้านตัดชุด ช่างภาพ ฯลฯ · คลิกวันในปฏิทินเพื่อเพิ่มนัด · เรียกใน Cowork ว่า "ซิงก์นัดเข้า Google Calendar" ผมสร้าง event ให้ผ่าน connector ที่เชื่อมไว้ทีเดียว</p>
+  <div class="calwrap">
+    <div class="card">
+      <div class="calhead">
+        <button class="calnav" onclick="mvMonth(-1)">‹</button>
+        <h3 id="calTitle"></h3>
+        <button class="calnav" onclick="mvMonth(1)">›</button>
+      </div>
+      <div class="calgrid" id="calGrid"></div>
+    </div>
+    <div class="card">
+      <h3>นัดที่กำลังจะถึง</h3>
+      <div class="aplist" id="apList"></div>
+      <div class="addform">
+        <div style="font-weight:800;margin-bottom:10px" id="addTitle">➕ เพิ่มนัดหมาย</div>
+        <div class="row"><input id="apDate" type="date"><input id="apTime" type="time" value="10:00"></div>
+        <div class="row"><input id="apName" type="text" placeholder="เช่น นัดดูห้องจัดเลี้ยง Marriott" style="grid-column:1/-1"></div>
+        <div class="row">
+          <select id="apCat"><option value="hotel">🏨 โรงแรม/สถานที่</option><option value="dress">👗 ชุด</option><option value="photo">📷 ถ่ายภาพ</option><option value="food">🍜 ชิมอาหาร</option><option value="other">📌 อื่นๆ</option></select>
+          <input id="apPlace" type="text" placeholder="สถานที่/ผู้ติดต่อ">
+        </div>
+        <button onclick="addAp()">บันทึกนัด</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GUESTS -->
+<div id="vG" class="hidden">
+  <h2 class="sec">รายชื่อแขก</h2>
+  <p class="sub">การ์ดรายคน กดสลับได้ว่ามางานไหน · เพิ่ม/ลบได้ ยอดสรุปด้านบนคำนวณสด</p>
+  <div class="kpis" id="guestKpi" style="margin-bottom:18px"></div>
+  <div id="guestList"></div>
+  <button class="btn solid" style="margin-top:10px" onclick="addGuest()">＋ เพิ่มแขก</button>
+</div>
+
+<!-- SETTINGS -->
+<div id="vSet" class="hidden">
+  <h2 class="sec">ตั้งค่า</h2>
+  <p class="sub">ช่องทั้งหมดบันทึกอัตโนมัติเมื่อพิมพ์เสร็จ · จำนวนแขก งบ วันแต่ง ถูกใช้คำนวณทุกหน้าอัตโนมัติ</p>
+  <div class="setgrid">
+    <div class="sfield"><label>ชื่อเจ้าบ่าว</label><input id="sGroom" type="text" placeholder="เช่น โอ"></div>
+    <div class="sfield"><label>ชื่อเจ้าสาว</label><input id="sBride" type="text" placeholder="เช่น เอ้"></div>
+    <div class="sfield"><label>วันแต่งงาน</label><input id="sDate" type="date"></div>
+    <div class="sfield"><label>งบประมาณรวม (บาท)</label><input id="sBudget" type="number" step="10000"></div>
+    <div class="sfield"><label>💍 เป้าแขกงานหมั้น (คน)</label><input id="sEngMax" type="number" min="0"></div>
+    <div class="sfield"><label>🥂 เป้าแขกงานเลี้ยง (คน)</label><input id="sMax" type="number" min="0"></div>
+    <div class="linknote">🔗 <b>ลิงก์อัตโนมัติ:</b> จำนวนแขก + งบจากหน้านี้ ใช้คำนวณในแท็บ 🏨 โรงแรม, 🏠 ภาพรวม และ 👥 แขก<br>
+    📅 <b>Google Calendar:</b> พิมพ์ใน Cowork chat ว่า <i>"ซิงก์นัดหมายเข้า Google Calendar"</i> ผมจะดึงจาก Supabase สร้าง event ให้ผ่าน connector ที่เชื่อมไว้แล้ว</div>
+  </div>
+</div>
+
+</div></main>
+
+<script>
+const SB_URL = "https://xjfzaarabsxngazzthpf.supabase.co";
+const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhqZnphYXJhYnN4bmdhenp0aHBmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1MDE2OTYsImV4cCI6MjA4OTA3NzY5Nn0.BUeCnbwYSDYgTh1SIpzWGE5LqsCz-q84vP0MuMo718M";
+const H = {"apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY, "Content-Type": "application/json"};
+
+let tasks=[], guests=[], aps=[], settings={};
+const PERIOD_ORDER = ["6+ เดือนก่อนงาน","4-6 เดือนก่อนงาน","2-3 เดือนก่อนงาน","1 เดือนก่อนงาน","2 สัปดาห์ก่อนงาน","1 สัปดาห์ก่อนงาน","1 วันก่อนงาน","วันงาน","หลังงาน"];
+const CATS_T = ["วางแผน/งบประมาณ","สถานที่","การ์ด/แขก","ชุด","ถ่ายภาพ","ดนตรี","ความสวยงาม","พิธีจีน","อาหาร/เครื่องดื่ม","ของชำร่วย/ของขวัญ","ทีมงาน","ฮันนีมูน","อื่นๆ"];
+const STATUSES = ["ยังไม่เริ่ม","กำลังทำ","เสร็จแล้ว","ข้าม"];
+const SIDES = ["","ฝ่ายเจ้าบ่าว (พ่อ-แม่)","ฝ่ายเจ้าบ่าว (ส่วนตัว)","ฝ่ายเจ้าสาว (พ่อ-แม่)","ฝ่ายเจ้าสาว (ส่วนตัว)"];
+const TIERS = ["Tier 1 - VIP","Tier 2 - สำคัญ","Tier 3 - ทั่วไป"];
+const RSVPS = ["ยังไม่ตอบ","ยืนยันมา","ไม่มา"];
+const CATS_A = {hotel:{l:"🏨 โรงแรม",c:"#2a78d6"}, dress:{l:"👗 ชุด",c:"#eb6834"}, photo:{l:"📷 ถ่ายภาพ",c:"#1baf7a"}, food:{l:"🍜 อาหาร",c:"#eda100"}, other:{l:"📌 อื่นๆ",c:"#8a8580"}};
+const HOTELS = [
+ {k:"eastin",   n:"Eastin Grand",      sub:"Surasak Ballroom",       eng:45000, extra:530, buffet:1600, table:21500, min:350000, note:"เครดิตคืน 10%"},
+ {k:"mvp",      n:"Mövenpick BDMS",    sub:"Harmony Ballroom",       eng:70000, extra:850, buffet:1700, table:20000, min:550000, note:""},
+ {k:"anantara", n:"Anantara Riverside",sub:"Chaophraya Ballroom",    eng:75000, extra:750, buffet:1850, table:19000, min:350000, note:""},
+ {k:"avani",    n:"Avani+ Riverside",  sub:"Grand Riverside Ballroom",eng:85000, extra:750, buffet:1900, table:19000, min:550000, note:""},
+ {k:"marriott", n:"Marriott Marquis",  sub:"The Great Hall",         eng:69000, extra:550, buffet:2200, table:22000, min:550000, note:"รวม soft drink 4 ชม."},
+];
+const THM_S = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+const THM_L = ["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
+
+function esc(s){return (s??"").toString().replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;")}
+function fmt(n){return (n||0).toLocaleString("th-TH")}
+function today0(){const d=new Date();d.setHours(0,0,0,0);return d}
+function thDate(iso, style){ if(!iso) return "—"; const d=new Date(iso+"T00:00:00");
+  if(style==="short") return d.getDate()+" "+THM_S[d.getMonth()]+" "+(d.getFullYear()+543);
+  return d.toLocaleDateString("th-TH",{day:"numeric",month:"short",year:"numeric"}) }
+function dueDate(days){ if(!settings.wedding_date || days==null) return null;
+  const d=new Date(settings.wedding_date+"T00:00:00"); d.setDate(d.getDate()-days); return d }
+function setSave(s){const el=document.getElementById("saveState"); el.className=s;
+  el.textContent = s==="saving"?"กำลังบันทึก...":s==="saved"?"บันทึกแล้ว ✓":s==="error"?"บันทึกไม่สำเร็จ ✗":""}
+
+async function api(path, opts={}){
+  const res = await fetch(SB_URL+"/rest/v1/"+path, {headers:{...H,...(opts.headers||{})}, ...opts});
+  if(!res.ok){ setSave("error"); throw new Error(await res.text()); }
+  const t = await res.text(); return t ? JSON.parse(t) : null;
+}
+async function save(table, id, patch){
+  setSave("saving");
+  try{ await api(table+"?id=eq."+id, {method:"PATCH", body: JSON.stringify({...patch, updated_at: new Date().toISOString()})}); setSave("saved"); }
+  catch(e){ console.error(e); }
+}
+
+async function loadAll(){
+  try{
+    const [t,g,a,s] = await Promise.all([
+      api("wedding_tasks?select=*&order=sort_order.asc"),
+      api("wedding_guests?select=*&order=sort_order.asc,id.asc"),
+      api("wedding_appointments?select=*&order=ap_date.asc,ap_time.asc"),
+      api("wedding_settings?select=*&id=eq.1"),
+    ]);
+    tasks=t; guests=g; aps=a; settings=s[0]||{};
+    document.getElementById("loading").classList.add("hidden");
+    document.getElementById("vHome").classList.remove("hidden");
+    initFilters(); renderAll();
+  }catch(e){
+    document.getElementById("loading").innerHTML = "⚠️ โหลดข้อมูลไม่สำเร็จ — เช็คเน็ตแล้วรีเฟรช<br><small>"+esc(e.message||e)+"</small>";
+  }
+}
+function renderAll(){
+  renderHeader(); renderDashboard(); renderHotelControls(); renderHotelBars();
+  renderTasks(); renderCal(); renderApList(); renderGuests(); renderSettings();
+}
+
+/* ---------- header ---------- */
+function renderHeader(){
+  const nm = [settings.groom_name, settings.bride_name].filter(Boolean).join(" ❤ ");
+  document.getElementById("coupleNames").textContent = nm ? "· "+nm : "· ยังไม่ได้ตั้งชื่อ";
+  const cd = document.getElementById("countdown");
+  if(settings.wedding_date){
+    const d = Math.ceil((new Date(settings.wedding_date+"T00:00:00") - today0()) / 86400000);
+    cd.textContent = d>0 ? "📅 อีก "+d+" วัน" : d===0 ? "🎉 วันนี้วันงาน!" : "ผ่านวันงาน "+(-d)+" วัน";
+  } else cd.textContent = "⚠️ ยังไม่ได้กำหนดวันแต่ง";
+}
+
+/* ---------- dashboard ---------- */
+function renderDashboard(){
+  const done = tasks.filter(t=>t.status==="เสร็จแล้ว"||t.status==="ข้าม").length;
+  const doing = tasks.filter(t=>t.status==="กำลังทำ").length;
+  const todo = tasks.filter(t=>t.status==="ยังไม่เริ่ม").length;
+  const gS = guestStats();
+  const engMax = settings.engagement_max||0, recMax = settings.max_guests||0;
+  const selHotel = HOTELS.find(h=>h.k===(settings.selected_hotel||"eastin")) || HOTELS[0];
+  const est = costOf(selHotel, gS.eng, gS.rec).total;
+  const bud = settings.budget||0;
+  const usedPct = bud ? Math.round(est/bud*100) : 0;
+  let cdVal="—", cdSub="ยังไม่กำหนดวัน";
+  if(settings.wedding_date){
+    const d = Math.ceil((new Date(settings.wedding_date+"T00:00:00") - today0())/86400000);
+    cdVal = d>0 ? d : d===0 ? "0" : "-"+(-d); cdSub = "วันงาน "+thDate(settings.wedding_date,"short");
+  }
+  document.getElementById("kpiRow").innerHTML = `
+    <div class="kpi hero"><div class="lab">นับถอยหลัง</div><div class="val">${cdVal} <small>วัน</small></div><div class="delta">${cdSub}</div></div>
+    <div class="kpi"><div class="lab">ความคืบหน้า</div><div class="val">${done}<small>/${tasks.length}</small></div><div class="delta">งานเสร็จ ${tasks.length?Math.round(done/tasks.length*100):0}% · กำลังทำ ${doing}</div></div>
+    <div class="kpi"><div class="lab">แขกยืนยัน · งานเลี้ยง</div><div class="val">${gS.recConfirmed}<small>/${recMax}</small></div><div class="delta">💍 งานหมั้น ${gS.engConfirmed}/${engMax}</div></div>
+    <div class="kpi"><div class="lab">ประมาณค่าใช้จ่าย (${selHotel.n})</div><div class="val">${usedPct||"—"}${bud?"%":""}</div><div class="delta">${fmt(est)} จากงบ ${fmt(bud)}</div></div>`;
+
+  donut("donutTasks","legTasks",[
+    {l:"เสร็จแล้ว",v:done,c:"var(--s1)"},
+    {l:"กำลังทำ",v:doing,c:"var(--s2)"},
+    {l:"ยังไม่เริ่ม",v:todo,c:"var(--neutral)"},
+  ], [tasks.length?Math.round(done/tasks.length*100)+"%":"—", "ของงานทั้งหมด"]);
+  donut("donutRsvp","legRsvp",[
+    {l:"ยืนยันมา",v:gS.confirmed,c:"var(--s3)"},
+    {l:"ยังไม่ตอบ",v:gS.pending,c:"var(--s2)"},
+    {l:"ไม่มา",v:gS.declined,c:"var(--neutral)"},
+  ], [gS.total||"—","คนในลิสต์"]);
+
+  const remain = bud - est;
+  const over = est > bud;
+  document.getElementById("budgetInfo").innerHTML = `
+    <div style="display:flex;justify-content:space-between;font-size:15.5px;font-weight:700">
+      <span>ประมาณการค่าใช้จ่าย ${fmt(est)} <small style="color:var(--ink2);font-weight:500">(อิง ${selHotel.n})</small></span>
+      <span style="color:var(--ink2)">งบที่ตั้งไว้ ${fmt(bud)}</span>
+    </div>
+    <div class="meter ${over?'over':''}"><div class="fill" style="width:${bud?Math.min(100,est/bud*100):0}%"></div></div>
+    <div class="meternote">${bud ? (over ? `<b style="color:var(--danger)">เกินงบ ${fmt(est-bud)} บาท</b>` : `เหลือพื้นที่งบอีก <b>${fmt(remain)} บาท</b>`) : "ยังไม่ได้ตั้งงบ — ตั้งได้ในแท็บ ⚙️"} · แก้จำนวนแขกและโรงแรมได้ในแท็บ 🏨</div>`;
+
+  const upcoming = [...aps].filter(a=>a.ap_date>=iso(today0().getFullYear(), today0().getMonth(), today0().getDate())).slice(0,3);
+  document.getElementById("upcomingAps").innerHTML = upcoming.length ? upcoming.map(a=>{
+    const dd = new Date(a.ap_date+"T00:00:00");
+    return `<div class="ap" style="display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px dashed var(--line)">
+      <div class="apdate"><b>${dd.getDate()}</b><span>${THM_S[dd.getMonth()]}</span></div>
+      <div class="apbody"><div class="t">${esc(a.title)}</div><small>🕐 ${(a.ap_time||"").slice(0,5)||"ทั้งวัน"} · ${esc(a.place)||"—"}</small></div>
+      <span class="apcat" style="background:${CATS_A[a.category]?.c||'#888'}">${CATS_A[a.category]?.l||a.category}</span>
+    </div>`}).join("") : '<p style="color:var(--ink2);font-size:14px">ยังไม่มีนัดหมายเร็วๆ นี้ · เพิ่มได้ในแท็บ 📅</p>';
+}
+
+function guestStats(){
+  const S = {total:0, confirmed:0, pending:0, declined:0, eng:0, rec:0, engConfirmed:0, recConfirmed:0};
+  for(const g of guests){
+    const pax = g.pax||0;
+    if(!g.full_name) continue;
+    S.total += pax;
+    if(g.rsvp==="ยืนยันมา") S.confirmed+=pax; else if(g.rsvp==="ไม่มา") S.declined+=pax; else S.pending+=pax;
+    if(g.attend_engagement && g.rsvp!=="ไม่มา"){ S.eng+=pax; if(g.rsvp==="ยืนยันมา") S.engConfirmed+=pax; }
+    if(g.attend_reception && g.rsvp!=="ไม่มา"){ S.rec+=pax; if(g.rsvp==="ยืนยันมา") S.recConfirmed+=pax; }
+  }
+  return S;
+}
+
+/* ---------- donut ---------- */
+function donut(svgId, legId, data, centerLabel){
+  const svg = document.getElementById(svgId), R=62, C=85, W=26;
+  const total = data.reduce((s,d)=>s+d.v,0);
+  if(!total){ svg.innerHTML = `<circle cx="${C}" cy="${C}" r="${R}" fill="none" stroke="#eee" stroke-width="${W}"/><text x="${C}" y="${C+5}" text-anchor="middle" font-size="14" fill="#a0998f">ยังไม่มีข้อมูล</text>`;
+    document.getElementById(legId).innerHTML = data.map(d=>`<div class="li"><span class="dot" style="background:${d.c}"></span>${d.l}<b>0</b></div>`).join(""); return; }
+  let a0=-Math.PI/2, parts="";
+  const GAP = data.filter(d=>d.v>0).length > 1 ? 0.035 : 0;
+  for(const d of data){
+    if(!d.v){continue}
+    const a1 = a0 + d.v/total*2*Math.PI;
+    const s = a0+GAP/2, e = Math.max(s, a1-GAP/2);
+    const large = (e-s) > Math.PI ? 1 : 0;
+    parts += `<path d="M ${C+R*Math.cos(s)} ${C+R*Math.sin(s)} A ${R} ${R} 0 ${large} 1 ${C+R*Math.cos(e)} ${C+R*Math.sin(e)}" fill="none" stroke="${d.c}" stroke-width="${W}"/>`;
+    a0 = a1;
+  }
+  parts += `<text x="${C}" y="${C-4}" text-anchor="middle" font-size="30" font-weight="800" fill="#1c1917">${centerLabel[0]}</text>
+            <text x="${C}" y="${C+20}" text-anchor="middle" font-size="13" fill="#6b6560">${centerLabel[1]}</text>`;
+  svg.innerHTML = parts;
+  document.getElementById(legId).innerHTML = data.map(d=>`<div class="li"><span class="dot" style="background:${d.c}"></span>${d.l}<b>${d.v}</b></div>`).join("");
+}
+function pie(svgId, legId, data, centerText){
+  const svg = document.getElementById(svgId), R=70, C=95, W=34;
+  const total = data.reduce((s,d)=>s+d.v,0);
+  let a0=-Math.PI/2, out="";
+  for(const d of data){
+    if(!d.v) continue;
+    const a1 = a0 + d.v/total*2*Math.PI, GAP=0.04;
+    const s = a0+GAP/2, e = Math.max(s,a1-GAP/2), large = (e-s)>Math.PI?1:0;
+    out += `<path d="M ${C+R*Math.cos(s)} ${C+R*Math.sin(s)} A ${R} ${R} 0 ${large} 1 ${C+R*Math.cos(e)} ${C+R*Math.sin(e)}" fill="none" stroke="${d.c}" stroke-width="${W}"/>`;
+    a0=a1;
+  }
+  out += `<text x="${C}" y="${C+6}" text-anchor="middle" font-size="19" font-weight="800" fill="#1c1917">${centerText}</text>`;
+  svg.innerHTML = out;
+  document.getElementById(legId).innerHTML = data.map(d=>{
+    const pct = total ? Math.round(d.v/total*100) : 0;
+    return `<div class="li"><span class="dot" style="background:${d.c}"></span>${d.l}<b>฿${fmt(d.v)} (${pct}%)</b></div>`}).join("");
+}
+
+/* ---------- hotel ---------- */
+function costOf(h, engG, recG){
+  const engCost = h.eng + Math.max(0, engG-50)*h.extra;
+  const food = (settings.menu_type||"buffet")==="buffet" ? h.buffet*recG : h.table*Math.ceil(recG/10);
+  return {engCost, food, min:h.min, total: engCost + Math.max(h.min, food)};
+}
+function renderHotelControls(){
+  document.getElementById("iEng").value = settings.engagement_max ?? 50;
+  document.getElementById("iRec").value = settings.max_guests ?? 300;
+  document.getElementById("iBud").value = settings.budget ?? 650000;
+  const menu = settings.menu_type || "buffet";
+  document.getElementById("mB").classList.toggle("on", menu==="buffet");
+  document.getElementById("mC").classList.toggle("on", menu==="chinese");
+  const bindHotel = (elId, field, parse) => document.getElementById(elId).onchange = e => {
+    const v = parse(e.target.value);
+    settings[field] = v; save("wedding_settings", 1, {[field]: v});
+    renderHotelBars(); renderDashboard();
+  };
+  bindHotel("iEng","engagement_max", v=>parseInt(v)||0);
+  bindHotel("iRec","max_guests",     v=>parseInt(v)||0);
+  bindHotel("iBud","budget",         v=>parseInt(v)||0);
+}
+function setMenuType(m){
+  settings.menu_type = m; save("wedding_settings", 1, {menu_type: m});
+  document.getElementById("mB").classList.toggle("on", m==="buffet");
+  document.getElementById("mC").classList.toggle("on", m==="chinese");
+  renderHotelBars(); renderDashboard();
+}
+function selectHotel(k){
+  settings.selected_hotel = k; save("wedding_settings", 1, {selected_hotel: k});
+  renderHotelBars(); renderDashboard();
+}
+function renderHotelBars(){
+  const engG = settings.engagement_max||0, recG = settings.max_guests||0, bud = settings.budget||0;
+  const selK = settings.selected_hotel || "eastin";
+  const rows = HOTELS.map(h=>({h, ...costOf(h, engG, recG)})).sort((a,b)=>a.total-b.total);
+  const max = Math.max(bud, ...rows.map(r=>r.total)) * 1.08;
+  document.getElementById("hotelBars").innerHTML = rows.map(r=>`
+    <div class="hbar ${r.h.k===selK?'sel':''}">
+      <div class="nm" onclick="selectHotel('${r.h.k}')">${r.h.n}${r.h.k===selK?" ✓":""}<small>${r.h.sub}${r.h.note?" · "+r.h.note:""}</small></div>
+      <div class="track">
+        ${bud?`<div class="budgetline" style="left:${Math.min(99.5, bud/max*100)}%"><span>งบ</span></div>`:""}
+        <div class="bfill ${bud && r.total>bud?'over':''}" style="width:${r.total/max*100}%"><span class="bval">฿${fmt(r.total)}</span></div>
+      </div>
+      <div class="fitbadge ${bud && r.total>bud?'fit-no':'fit-ok'}">${bud ? (r.total>bud ? "เกินงบ +"+fmt(r.total-bud) : "ในงบ ✓") : "—"}</div>
+    </div>`).join("");
+  const h = HOTELS.find(x=>x.k===selK) || HOTELS[0];
+  const c = costOf(h, engG, recG);
+  const topup = Math.max(0, h.min - c.food);
+  document.getElementById("breakTitle").textContent = "โครงสร้างค่าใช้จ่าย — "+h.n;
+  const parts = [
+    {l:"งานหมั้น"+(engG>50?" (+เกิน "+(engG-50)+" คน)":""), v:c.engCost, c:"var(--s1)"},
+    {l:(settings.menu_type||"buffet")==="buffet" ? "อาหารบุฟเฟต์ × "+recG+" คน" : "โต๊ะจีน "+Math.ceil(recG/10)+" โต๊ะ", v:c.food, c:"var(--s2)"},
+  ];
+  if(topup>0) parts.push({l:"ส่วนต่างถึงยอดขั้นต่ำ", v:topup, c:"var(--s3)"});
+  pie("pieBreak","legBreak",parts,"฿"+fmt(c.total));
+}
+
+/* ---------- timeline ---------- */
+function initFilters(){
+  const sel = document.getElementById("fCat");
+  const cats = [...new Set([...CATS_T, ...tasks.map(t=>t.category)])].filter(Boolean);
+  sel.innerHTML = '<option value="">ทุกหมวด</option>' + cats.map(c=>`<option>${esc(c)}</option>`).join("");
+}
+function statusClass(s){return s==="เสร็จแล้ว"?"st-done":s==="กำลังทำ"?"st-doing":s==="ข้าม"?"st-skip":"st-todo"}
+function renderTasks(){
+  const fc = document.getElementById("fCat").value, fs = document.getElementById("fStatus").value,
+        q = document.getElementById("fSearch").value.trim().toLowerCase();
+  const periods = [...PERIOD_ORDER.filter(p=>tasks.some(t=>t.period===p)),
+                   ...new Set(tasks.map(t=>t.period).filter(p=>!PERIOD_ORDER.includes(p)))];
+  const today = today0();
+  let html = "";
+  for(const p of periods){
+    let rows = tasks.filter(t=>t.period===p);
+    if(fc) rows = rows.filter(t=>t.category===fc);
+    if(fs) rows = rows.filter(t=>t.status===fs);
+    if(q) rows = rows.filter(t=>(t.task+" "+(t.note||"")+" "+(t.owner||"")).toLowerCase().includes(q));
+    if(!rows.length) continue;
+    const dn = rows.filter(t=>t.status==="เสร็จแล้ว"||t.status==="ข้าม").length;
+    html += `<div class="tl-period">
+      <div class="tl-head"><h3>${esc(p)}</h3><div class="bar"><i style="width:${rows.length?dn/rows.length*100:0}%"></i></div><span>${dn}/${rows.length}</span></div>`;
+    for(const t of rows){
+      const dd = dueDate(t.days_before);
+      const over = dd && dd<today && t.status!=="เสร็จแล้ว" && t.status!=="ข้าม";
+      html += `<div class="titem ${t.status==='เสร็จแล้ว'?'done':''}" data-id="${t.id}">
+        <div class="chk" onclick="toggleDone(${t.id})">${t.status==='เสร็จแล้ว'?'✓':''}</div>
+        <div class="t-name"><input type="text" value="${esc(t.task)}" onchange="upTask(${t.id},'task',this.value)">
+          <small>${esc(t.category)}${t.note?" · "+esc(t.note):""}${t.suggested?'<span class="sug">แนะนำเพิ่ม</span>':''}</small></div>
+        <div class="t-owner"><input type="text" placeholder="ผู้รับผิดชอบ" value="${esc(t.owner)}" onchange="upTask(${t.id},'owner',this.value)"></div>
+        <select class="chip-sel ${statusClass(t.status)}" onchange="upTask(${t.id},'status',this.value);renderTasks();renderDashboard()">
+          ${STATUSES.map(s=>`<option ${s===t.status?"selected":""}>${s}</option>`).join("")}</select>
+        <div class="t-due"><div class="due ${over?'red':''}">${dd?thDate(dd.toISOString().slice(0,10),"short"):'—'}</div>
+          <button class="del" title="ลบ" onclick="delTask(${t.id})">🗑</button></div>
+      </div>`;
+    }
+    html += `<button class="btn" style="margin-top:6px" onclick="addTask('${esc(p)}')">＋ เพิ่มรายการใน "${esc(p)}"</button></div>`;
+  }
+  document.getElementById("taskList").innerHTML = html || '<p style="color:var(--ink2)">ไม่พบรายการตามตัวกรอง</p>';
+}
+function upTask(id, field, val){
+  const t = tasks.find(x=>x.id===id); if(t) t[field] = val;
+  save("wedding_tasks", id, {[field]: val});
+}
+function toggleDone(id){
+  const t = tasks.find(x=>x.id===id); if(!t) return;
+  t.status = t.status==="เสร็จแล้ว" ? "ยังไม่เริ่ม" : "เสร็จแล้ว";
+  save("wedding_tasks", id, {status: t.status});
+  renderTasks(); renderDashboard();
+}
+async function addTask(period){
+  setSave("saving");
+  const ref = tasks.find(t=>t.period===period);
+  const maxOrder = Math.max(0, ...tasks.filter(t=>t.period===period).map(t=>t.sort_order||0));
+  const r = await api("wedding_tasks", {method:"POST", headers:{Prefer:"return=representation"}, body: JSON.stringify(
+    {period, category:"อื่นๆ", task:"รายการใหม่", status:"ยังไม่เริ่ม", days_before: ref?ref.days_before:null, sort_order: maxOrder+1})});
+  tasks.push(r[0]); tasks.sort((a,b)=>(a.sort_order||0)-(b.sort_order||0)); setSave("saved");
+  renderTasks(); renderDashboard();
+}
+async function delTask(id){
+  if(!confirm("ลบรายการนี้?")) return;
+  setSave("saving");
+  await api("wedding_tasks?id=eq."+id, {method:"DELETE"});
+  tasks = tasks.filter(t=>t.id!==id); setSave("saved"); renderTasks(); renderDashboard();
+}
+
+/* ---------- calendar ---------- */
+let calY, calM;
+function iso(y,m,d){return y+"-"+String(m+1).padStart(2,"0")+"-"+String(d).padStart(2,"0")}
+function mvMonth(dir){ calM += dir; if(calM<0){calM=11;calY--} if(calM>11){calM=0;calY++} renderCal(); }
+function renderCal(){
+  if(calY===undefined){ const t=today0(); calY=t.getFullYear(); calM=t.getMonth(); }
+  document.getElementById("calTitle").textContent = THM_L[calM]+" "+(calY+543);
+  const first = new Date(calY, calM, 1);
+  const startDow = first.getDay();
+  const daysIn = new Date(calY, calM+1, 0).getDate();
+  const todayIso = iso(today0().getFullYear(), today0().getMonth(), today0().getDate());
+  let html = ["อา","จ","อ","พ","พฤ","ศ","ส"].map(d=>`<div class="dow">${d}</div>`).join("");
+  for(let i=0;i<startDow;i++) html += `<div></div>`;
+  for(let d=1; d<=daysIn; d++){
+    const dt = iso(calY,calM,d);
+    const evs = aps.filter(a=>a.ap_date===dt);
+    const cls = ["day", dt===todayIso?"today":"", dt===settings.wedding_date?"wed":""].join(" ");
+    html += `<div class="${cls}" onclick="pickDay('${dt}')">
+      <div class="dn">${d}</div>
+      ${dt===settings.wedding_date?'<span class="wedlab">💍 วันงาน</span>':''}
+      ${evs.slice(0,2).map(e=>`<span class="evdot" style="background:${CATS_A[e.category]?.c||'#888'}">${(e.ap_time||"").slice(0,5)} ${esc(e.title)}</span>`).join("")}
+      ${evs.length>2?`<span class="evdot" style="background:#8a8580">+${evs.length-2} นัด</span>`:""}
+    </div>`;
+  }
+  document.getElementById("calGrid").innerHTML = html;
+}
+function renderApList(){
+  const upcoming = [...aps].sort((a,b)=>(a.ap_date+a.ap_time).localeCompare(b.ap_date+b.ap_time));
+  document.getElementById("apList").innerHTML = upcoming.map(a=>{
+    const dd = new Date(a.ap_date+"T00:00:00");
+    return `<div class="ap">
+      <div class="apdate"><b>${dd.getDate()}</b><span>${THM_S[dd.getMonth()]}</span></div>
+      <div class="apbody"><div class="t">${esc(a.title)}</div><small>🕐 ${(a.ap_time||"").slice(0,5)||"ทั้งวัน"} · ${esc(a.place)||"—"}</small></div>
+      <span class="apcat" style="background:${CATS_A[a.category]?.c||'#888'}">${CATS_A[a.category]?.l||a.category}</span>
+      <div class="apactions"><button title="ลบ" onclick="delAp(${a.id})">🗑</button></div>
+    </div>`}).join("") || '<p style="color:var(--ink2);font-size:14px">ยังไม่มีนัดหมาย · คลิกวันในปฏิทินเพื่อเพิ่ม</p>';
+}
+function pickDay(dt){
+  document.getElementById("apDate").value = dt;
+  document.getElementById("addTitle").textContent = "➕ เพิ่มนัดหมาย · " + new Date(dt+"T00:00:00").toLocaleDateString("th-TH",{day:"numeric",month:"long",year:"numeric"});
+  document.getElementById("apName").focus();
+}
+async function addAp(){
+  const d=document.getElementById("apDate").value, t=document.getElementById("apTime").value, n=document.getElementById("apName").value.trim();
+  if(!d||!n){ alert("ใส่วันที่และชื่อนัดก่อนครับ"); return; }
+  setSave("saving");
+  const r = await api("wedding_appointments", {method:"POST", headers:{Prefer:"return=representation"}, body: JSON.stringify(
+    {ap_date:d, ap_time:t||null, title:n, category:document.getElementById("apCat").value, place:document.getElementById("apPlace").value.trim()})});
+  aps.push(r[0]); setSave("saved");
+  document.getElementById("apName").value=""; document.getElementById("apPlace").value="";
+  const dd = new Date(d+"T00:00:00"); calY = dd.getFullYear(); calM = dd.getMonth();
+  renderCal(); renderApList(); renderDashboard();
+}
+async function delAp(id){
+  if(!confirm("ลบนัดนี้?")) return;
+  setSave("saving");
+  await api("wedding_appointments?id=eq."+id, {method:"DELETE"});
+  aps = aps.filter(a=>a.id!==id); setSave("saved");
+  renderCal(); renderApList(); renderDashboard();
+}
+
+/* ---------- guests ---------- */
+function initials(n){return (n||"?").trim().split(/\s+/).map(s=>s[0]).slice(0,2).join("")}
+function renderGuests(){
+  const S = guestStats();
+  const engMax = settings.engagement_max||0, recMax = settings.max_guests||0;
+  document.getElementById("guestKpi").innerHTML = `
+    <div class="kpi ${S.eng>engMax?'':''}"><div class="lab">💍 งานหมั้น</div><div class="val">${S.eng}<small>/${engMax}</small></div><div class="delta">ยืนยันแล้ว ${S.engConfirmed} · ${engMax?Math.round(S.eng/engMax*100):0}%</div></div>
+    <div class="kpi"><div class="lab">🥂 งานเลี้ยง</div><div class="val">${S.rec}<small>/${recMax}</small></div><div class="delta">ยืนยันแล้ว ${S.recConfirmed} · ${recMax?Math.round(S.rec/recMax*100):0}%</div></div>
+    <div class="kpi"><div class="lab">ยังไม่ตอบ</div><div class="val">${S.pending}</div><div class="delta">รวมทั้งลิสต์ ${S.total} คน</div></div>`;
+  document.getElementById("guestList").innerHTML = guests.map(g=>`
+    <div class="gcard" data-gid="${g.id}">
+      <div class="avatar">${esc(initials(g.full_name)||"?")}</div>
+      <div class="g-name">
+        <input type="text" value="${esc(g.full_name)}" placeholder="ชื่อ-นามสกุล" onchange="upGuest(${g.id},'full_name',this.value);renderGuests()">
+        <div class="meta">
+          <select onchange="upGuest(${g.id},'side',this.value)">${SIDES.map(s=>`<option value="${esc(s)}" ${s===(g.side||"")?"selected":""}>${s||"ยังไม่ระบุฝ่าย"}</option>`).join("")}</select>
+          <select onchange="upGuest(${g.id},'tier',this.value)">${TIERS.map(t=>`<option ${t===g.tier?"selected":""}>${t}</option>`).join("")}</select>
+          <input type="number" min="1" value="${g.pax||1}" onchange="upGuest(${g.id},'pax',parseInt(this.value)||1);renderGuests();renderDashboard()"> คน
+        </div>
+      </div>
+      <div class="g-events evtags">
+        <span class="evtag ${g.attend_engagement?'on':''}" onclick="toggleEv(${g.id},'attend_engagement')">💍 หมั้น</span>
+        <span class="evtag ${g.attend_reception?'on':''}" onclick="toggleEv(${g.id},'attend_reception')">🥂 เลี้ยง</span>
+      </div>
+      <div class="g-rsvp">
+        <select onchange="upGuest(${g.id},'rsvp',this.value);renderGuests();renderDashboard()">${RSVPS.map(r=>`<option ${r===g.rsvp?"selected":""}>${r}</option>`).join("")}</select>
+      </div>
+      <button class="del" onclick="delGuest(${g.id})">🗑</button>
+    </div>`).join("") || '<p style="color:var(--ink2)">ยังไม่มีแขก · กด "เพิ่มแขก" ด้านล่าง</p>';
+}
+function upGuest(id, field, val){
+  const g = guests.find(x=>x.id===id); if(g) g[field] = val;
+  save("wedding_guests", id, {[field]: val});
+}
+function toggleEv(id, field){
+  const g = guests.find(x=>x.id===id); if(!g) return;
+  g[field] = !g[field]; save("wedding_guests", id, {[field]: g[field]});
+  renderGuests(); renderDashboard();
+}
+async function addGuest(){
+  setSave("saving");
+  const maxOrder = Math.max(0, ...guests.map(g=>g.sort_order||0));
+  const r = await api("wedding_guests", {method:"POST", headers:{Prefer:"return=representation"}, body: JSON.stringify({sort_order:maxOrder+1})});
+  guests.push(r[0]); setSave("saved"); renderGuests(); renderDashboard();
+}
+async function delGuest(id){
+  const g = guests.find(x=>x.id===id);
+  if(g && g.full_name && !confirm(`ลบ "${g.full_name}"?`)) return;
+  setSave("saving");
+  await api("wedding_guests?id=eq."+id, {method:"DELETE"});
+  guests = guests.filter(x=>x.id!==id); setSave("saved"); renderGuests(); renderDashboard();
+}
+
+/* ---------- settings ---------- */
+function renderSettings(){
+  document.getElementById("sGroom").value = settings.groom_name || "";
+  document.getElementById("sBride").value = settings.bride_name || "";
+  document.getElementById("sDate").value = settings.wedding_date || "";
+  document.getElementById("sBudget").value = settings.budget ?? 650000;
+  document.getElementById("sEngMax").value = settings.engagement_max ?? 50;
+  document.getElementById("sMax").value = settings.max_guests ?? 300;
+  const bind = (id, field, parse) => document.getElementById(id).onchange = e => {
+    const v = parse ? parse(e.target.value) : e.target.value;
+    settings[field] = v === "" ? null : v;
+    save("wedding_settings", 1, {[field]: settings[field]});
+    renderAll();
+  };
+  bind("sGroom","groom_name"); bind("sBride","bride_name"); bind("sDate","wedding_date");
+  bind("sBudget","budget", v=>parseInt(v)||0);
+  bind("sEngMax","engagement_max", v=>parseInt(v)||0);
+  bind("sMax","max_guests", v=>parseInt(v)||0);
+}
+
+/* ---------- tabs ---------- */
+function tab(btn, id){
+  document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on", b===btn));
+  for(const v of ["vHome","vHotel","vTl","vCal","vG","vSet"]) document.getElementById(v).classList.toggle("hidden", v!==id);
+}
+
+loadAll();
+</script>
+</body>
+</html>
