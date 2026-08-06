@@ -80,6 +80,17 @@
   .budgetline span{position:absolute;top:-22px;left:-18px;font-size:12px;font-weight:700;color:var(--ink)}
 
   .breakrow{display:flex;gap:26px;align-items:center;flex-wrap:wrap;margin-top:8px}
+  .minipies{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
+  .mp{border:1.5px solid var(--line);border-radius:14px;padding:14px 12px;text-align:center;cursor:pointer;transition:.15s;background:#fff}
+  .mp:hover{border-color:var(--gold);background:#fffdf8}
+  .mp.sel{border:2.5px solid var(--gold);background:var(--gold-soft)}
+  .mp .nm{font-size:14.5px;font-weight:800;line-height:1.25}
+  .mp .sub2{font-size:11.5px;color:var(--ink2);margin-bottom:6px}
+  .mp svg{width:130px;height:130px;display:block;margin:0 auto}
+  .mp .tot{font-size:16px;font-weight:800;margin-top:4px}
+  .mp .fit{font-size:11.5px;font-weight:700;border-radius:6px;padding:2px 8px;margin-top:4px;display:inline-block}
+  .mp .brk{font-size:11.5px;color:var(--ink2);margin-top:4px;line-height:1.5}
+  .mp .brk b{color:var(--ink)}
   .fine{font-size:13.5px;color:var(--ink2);border-top:1px dashed var(--line);margin-top:18px;padding-top:12px}
 
   /* timeline */
@@ -270,8 +281,9 @@
     <div class="fine">ราคา net จากใบเสนอราคาจริง · แขกหมั้นเกิน 50 คนคิดค่า coffee break เพิ่มต่อหัว · โต๊ะจีนคิดโต๊ะละ 10 ท่าน (ปัดขึ้น) · ค่าเบียร์/ไวน์/เค้ก/ดอกไม้เสริมไม่รวมในตัวเลขนี้</div>
   </div>
   <div class="card" style="margin-top:16px">
-    <h3 id="breakTitle">โครงสร้างค่าใช้จ่าย</h3>
-    <div class="breakrow"><svg id="pieBreak" width="190" height="190" viewBox="0 0 190 190"></svg><div class="legend" id="legBreak"></div></div>
+    <h3>โครงสร้างค่าใช้จ่าย · ทุกโรงแรม</h3>
+    <p style="font-size:14px;color:var(--ink2);margin-bottom:14px">แยกส่วน: <span style="color:var(--s1);font-weight:700">■ งานหมั้น</span> · <span style="color:var(--s2);font-weight:700">■ อาหารงานเลี้ยง</span> · <span style="color:var(--s3);font-weight:700">■ ส่วนต่างขั้นต่ำ</span> — โรงแรมที่เลือกอยู่จะไฮไลต์กรอบทอง</p>
+    <div class="minipies" id="miniPies"></div>
   </div>
 
 <h2 class="sec" style="margin-top:36px">รายละเอียดโรงแรมทั้งหมด</h2>
@@ -743,16 +755,50 @@ function renderHotelBars(){
       </div>
       <div class="fitbadge ${bud && r.total>bud?'fit-no':'fit-ok'}">${bud ? (r.total>bud ? "เกินงบ +"+fmt(r.total-bud) : "ในงบ ✓") : "—"}</div>
     </div>`).join("");
-  const h = HOTELS.find(x=>x.k===selK) || HOTELS[0];
-  const c = costOf(h, engG, recG);
-  const topup = Math.max(0, h.min - c.food);
-  document.getElementById("breakTitle").textContent = "โครงสร้างค่าใช้จ่าย — "+h.n;
-  const parts = [
-    {l:"งานหมั้น"+(engG>50?" (+เกิน "+(engG-50)+" คน)":""), v:c.engCost, c:"var(--s1)"},
-    {l:(settings.menu_type||"buffet")==="buffet" ? "อาหารบุฟเฟต์ × "+recG+" คน" : "โต๊ะจีน "+Math.ceil(recG/10)+" โต๊ะ", v:c.food, c:"var(--s2)"},
-  ];
-  if(topup>0) parts.push({l:"ส่วนต่างถึงยอดขั้นต่ำ", v:topup, c:"var(--s3)"});
-  pie("pieBreak","legBreak",parts,"฿"+fmt(c.total));
+  // Small-multiples: one pie per hotel
+  const menu = settings.menu_type || "buffet";
+  const wrap = document.getElementById("miniPies");
+  wrap.innerHTML = HOTELS.map(h => {
+    const c = costOf(h, engG, recG);
+    const topup = Math.max(0, h.min - c.food);
+    const parts = [
+      {v: c.engCost, c: "#2a78d6"},
+      {v: c.food, c: "#eb6834"},
+      ...(topup>0 ? [{v: topup, c: "#1baf7a"}] : []),
+    ];
+    const svg = miniPieSvg(parts);
+    const fit = bud ? (c.total>bud ? `<span class="fit fit-no">เกินงบ +${fmt(c.total-bud)}</span>` : `<span class="fit fit-ok">ในงบ ✓</span>`) : "";
+    const brk = `<div class="brk">หมั้น <b>฿${fmt(c.engCost)}</b> · อาหาร <b>฿${fmt(c.food)}</b>${topup>0?` · ส่วนต่าง <b>฿${fmt(topup)}</b>`:""}</div>`;
+    return `<div class="mp ${h.k===selK?'sel':''}" onclick="selectHotel('${h.k}')">
+      <div class="nm">${h.n}${h.k===selK?" ✓":""}</div>
+      <div class="sub2">${h.sub}</div>
+      ${svg}
+      <div class="tot">฿${fmt(c.total)}</div>
+      ${fit}
+      ${brk}
+    </div>`;
+  }).join("");
+}
+
+function miniPieSvg(parts){
+  const R=52, C=65, W=22;
+  const total = parts.reduce((s,d)=>s+d.v,0);
+  if(!total) return `<svg viewBox="0 0 130 130"><circle cx="${C}" cy="${C}" r="${R}" fill="none" stroke="#eee" stroke-width="${W}"/></svg>`;
+  let a0 = -Math.PI/2, out = "";
+  const GAP = parts.filter(p=>p.v>0).length > 1 ? 0.05 : 0;
+  for(const d of parts){
+    if(!d.v) continue;
+    const a1 = a0 + d.v/total * 2*Math.PI;
+    const s = a0 + GAP/2, e = Math.max(s, a1 - GAP/2);
+    const large = (e-s) > Math.PI ? 1 : 0;
+    out += `<path d="M ${C+R*Math.cos(s)} ${C+R*Math.sin(s)} A ${R} ${R} 0 ${large} 1 ${C+R*Math.cos(e)} ${C+R*Math.sin(e)}" fill="none" stroke="${d.c}" stroke-width="${W}"/>`;
+    a0 = a1;
+  }
+  // percent for biggest slice as center label
+  const top = parts.slice().sort((a,b)=>b.v-a.v)[0];
+  const pct = Math.round(top.v/total*100);
+  out += `<text x="${C}" y="${C+5}" text-anchor="middle" font-size="16" font-weight="800" fill="#1c1917">${pct}%</text>`;
+  return `<svg viewBox="0 0 130 130">${out}</svg>`;
 }
 
 /* ---------- timeline ---------- */
