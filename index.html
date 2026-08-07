@@ -562,7 +562,8 @@ function setSave(s){const el=document.getElementById("saveState"); el.className=
   el.textContent = s==="saving"?"กำลังบันทึก...":s==="saved"?"บันทึกแล้ว ✓":s==="error"?"บันทึกไม่สำเร็จ ✗":""}
 
 async function api(path, opts={}){
-  const res = await fetch(SB_URL+"/rest/v1/"+path, {headers:{...H,...(opts.headers||{})}, ...opts});
+  // NOTE: spread opts FIRST so headers merge below wins (fixed apikey-drop bug on POSTs with custom headers)
+  const res = await fetch(SB_URL+"/rest/v1/"+path, {...opts, headers:{...H,...(opts.headers||{})}});
   if(!res.ok){ setSave("error"); throw new Error(await res.text()); }
   const t = await res.text(); return t ? JSON.parse(t) : null;
 }
