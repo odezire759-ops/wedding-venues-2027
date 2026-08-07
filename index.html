@@ -533,6 +533,44 @@
    ===================================================================== */
 
 </style>
+<style id="tlViz">
+@media screen {
+  .tlviz{margin-bottom:16px}
+  .tlviz h3{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  /* journey path */
+  .journey{display:flex;align-items:flex-start;overflow-x:auto;padding:10px 4px 6px}
+  .jnode{text-align:center;min-width:104px;flex:none}
+  .jnode.done .jpct{color:#17695c}
+  .jpct{font-size:15px;font-weight:800;color:var(--gold);margin-top:2px}
+  .jlab{font-size:12.5px;font-weight:700;color:var(--ink);line-height:1.3;margin-top:2px}
+  .jcnt{font-size:11px;color:var(--ink2);margin-top:1px}
+  .jlink{flex:none;width:30px;border-top:3px dashed #ffb8d0;margin-top:30px}
+  .jgoal{width:60px;height:60px;border-radius:50%;background:linear-gradient(140deg,#ffe3ee,#ffd0e0);border:3px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto;box-shadow:0 4px 12px rgba(224,68,124,.25);animation:pulse 2.2s ease-in-out infinite}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+  /* category chart */
+  .catgrid{display:grid;grid-template-columns:1fr 1fr;gap:4px 24px}
+  @media(max-width:760px){.catgrid{grid-template-columns:1fr}}
+  .catrow{display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:14px;cursor:pointer}
+  .catrow:hover{background:#fff0f5}
+  .catrow.sel{background:var(--gold-soft);outline:2px solid #ffb8d0}
+  .cat-ic{width:38px;height:38px;border-radius:50%;background:#ffe3ee;border:2px solid #ffb8d0;display:flex;align-items:center;justify-content:center;font-size:18px;flex:none}
+  .catname{font-size:13.5px;font-weight:700;width:132px;line-height:1.25}
+  .catbar{flex:1;height:14px;background:#fdeef4;border-radius:8px;overflow:hidden}
+  .catbar i{display:block;height:100%;background:linear-gradient(90deg,#e0447c,#ff7fab);border-radius:8px;transition:width .4s}
+  .catcnt{font-size:12.5px;font-weight:800;color:var(--ink2);min-width:36px;text-align:right}
+  /* task card category icon + adjust grid for the new column */
+  .titem{grid-template-columns:auto auto 1fr auto auto auto}
+  .tcat{width:36px;height:36px;border-radius:50%;background:#ffe3ee;border:2px solid #ffb8d0;display:flex;align-items:center;justify-content:center;font-size:17px;flex:none}
+  @media(max-width:760px){.titem{grid-template-columns:auto auto 1fr auto}.tcat{width:30px;height:30px;font-size:14px}}
+}
+@media print {
+  .journey{overflow:visible;flex-wrap:wrap}
+  .tlviz,.jnode,.catrow{break-inside:avoid;page-break-inside:avoid}
+  .jgoal{animation:none}
+  .catrow.sel{outline:none}
+}
+</style>
+
 
 </head>
 <body>
@@ -1126,16 +1164,78 @@ function miniPieSvg(parts){
 function initFilters(){
   const sel = document.getElementById("fCat");
   const cats = [...new Set([...CATS_T, ...tasks.map(t=>t.category)])].filter(Boolean);
-  sel.innerHTML = '<option value="">ทุกหมวด</option>' + cats.map(c=>`<option>${esc(c)}</option>`).join("");
+  sel.innerHTML = '<option value="">🌈 ทุกหมวด</option>' + cats.map(c=>`<option value="${esc(c)}">${catIcon(c)} ${esc(c)}</option>`).join("");
 }
 function statusClass(s){return s==="เสร็จแล้ว"?"st-done":s==="กำลังทำ"?"st-doing":s==="ข้าม"?"st-skip":"st-todo"}
+
+/* ---------- timeline infographic: journey + category chart ---------- */
+const CAT_ICONS = {"วางแผน/งบประมาณ":"📋","สถานที่":"🏰","การ์ด/แขก":"💌","ชุด":"👗","ถ่ายภาพ":"📸","ดนตรี":"🎶","ความสวยงาม":"💄","พิธีจีน":"🏮","อาหาร/เครื่องดื่ม":"🍰","ของชำร่วย/ของขวัญ":"🎁","ทีมงาน":"🤝","ฮันนีมูน":"🏝️","อื่นๆ":"⭐"};
+const PERIOD_ICONS = {"6+ เดือนก่อนงาน":"🗓️","4-6 เดือนก่อนงาน":"📸","2-3 เดือนก่อนงาน":"💌","1 เดือนก่อนงาน":"👗","2 สัปดาห์ก่อนงาน":"🎀","1 สัปดาห์ก่อนงาน":"💐","1 วันก่อนงาน":"🌙","วันงาน":"💒","หลังงาน":"🎉"};
+function catIcon(c){return CAT_ICONS[c] || "⭐"}
+function jring(frac, emoji){
+  const R=24, C=30, W=6, circ=2*Math.PI*R;
+  const dash = Math.max(0.001, frac)*circ;
+  return `<svg width="60" height="60" viewBox="0 0 60 60">
+    <circle cx="${C}" cy="${C}" r="${R}" fill="#fff" stroke="#ffd9e5" stroke-width="${W}"/>
+    <circle cx="${C}" cy="${C}" r="${R}" fill="none" stroke="#e0447c" stroke-width="${W}"
+      stroke-linecap="round" stroke-dasharray="${dash} ${circ}" transform="rotate(-90 ${C} ${C})"/>
+    <text x="${C}" y="${C+7}" text-anchor="middle" font-size="20">${emoji}</text></svg>`;
+}
+function renderTlViz(){
+  const periods = [...PERIOD_ORDER.filter(p=>tasks.some(t=>t.period===p)),
+                   ...new Set(tasks.map(t=>t.period).filter(p=>!PERIOD_ORDER.includes(p)))];
+  // --- journey path ---
+  let j = "";
+  periods.forEach((p,i)=>{
+    const rows = tasks.filter(t=>t.period===p);
+    const dn = rows.filter(t=>t.status==="เสร็จแล้ว"||t.status==="ข้าม").length;
+    const frac = rows.length ? dn/rows.length : 0;
+    const dd = rows.length ? dueDate(rows[0].days_before) : null;
+    if(i>0) j += `<div class="jlink"></div>`;
+    j += `<div class="jnode ${frac>=1?'done':''}">
+      ${jring(frac, PERIOD_ICONS[p]||"📍")}
+      <div class="jpct">${Math.round(frac*100)}%</div>
+      <div class="jlab">${esc(p)}</div>
+      <div class="jcnt">${dn}/${rows.length}${dd?" · "+thDate(dd.toISOString().slice(0,10),"short"):""}</div>
+    </div>`;
+  });
+  j += `<div class="jlink"></div><div class="jnode goal"><div class="jgoal">💒</div><div class="jpct" style="color:var(--gold)">วันวิวาห์</div><div class="jlab">${settings.wedding_date?thDate(settings.wedding_date,"short"):"รอกำหนดวัน"}</div></div>`;
+
+  // --- category chart ---
+  const cats = {};
+  for(const t of tasks){
+    const c = t.category || "อื่นๆ";
+    cats[c] = cats[c] || {total:0, done:0};
+    cats[c].total++;
+    if(t.status==="เสร็จแล้ว"||t.status==="ข้าม") cats[c].done++;
+  }
+  const rows = Object.entries(cats).sort((a,b)=>b[1].total-a[1].total);
+  const fc = document.getElementById("fCat").value;
+  const cbars = rows.map(([c,v])=>`
+    <div class="catrow ${fc===c?'sel':''}" onclick="pickCat('${esc(c)}')" title="กดเพื่อกรองหมวดนี้">
+      <div class="cat-ic">${catIcon(c)}</div>
+      <div class="catname">${esc(c)}</div>
+      <div class="catbar"><i style="width:${v.total?v.done/v.total*100:0}%"></i></div>
+      <div class="catcnt">${v.done}/${v.total}</div>
+    </div>`).join("");
+
+  return `
+    <div class="card tlviz"><h3>🛤️ เส้นทางสู่วันวิวาห์</h3><div class="journey">${j}</div></div>
+    <div class="card tlviz"><h3>🎨 ความคืบหน้าแยกตามหมวด <small style="font-weight:500;color:var(--ink2);font-size:13px">(กดหมวดเพื่อกรองรายการด้านล่าง)</small></h3><div class="catgrid">${cbars}</div></div>`;
+}
+function pickCat(c){
+  const sel = document.getElementById("fCat");
+  sel.value = (sel.value === c) ? "" : c;
+  renderTasks();
+}
+
 function renderTasks(){
   const fc = document.getElementById("fCat").value, fs = document.getElementById("fStatus").value,
         q = document.getElementById("fSearch").value.trim().toLowerCase();
   const periods = [...PERIOD_ORDER.filter(p=>tasks.some(t=>t.period===p)),
                    ...new Set(tasks.map(t=>t.period).filter(p=>!PERIOD_ORDER.includes(p)))];
   const today = today0();
-  let html = "";
+  let html = renderTlViz();
   for(const p of periods){
     let rows = tasks.filter(t=>t.period===p);
     if(fc) rows = rows.filter(t=>t.category===fc);
@@ -1150,6 +1250,7 @@ function renderTasks(){
       const over = dd && dd<today && t.status!=="เสร็จแล้ว" && t.status!=="ข้าม";
       html += `<div class="titem ${t.status==='เสร็จแล้ว'?'done':''}" data-id="${t.id}">
         <div class="chk" onclick="toggleDone(${t.id})">${t.status==='เสร็จแล้ว'?'✓':''}</div>
+        <div class="tcat" title="${esc(t.category)}">${catIcon(t.category)}</div>
         <div class="t-name"><input type="text" value="${esc(t.task)}" onchange="upTask(${t.id},'task',this.value)">
           <small>${esc(t.category)}${t.note?" · "+esc(t.note):""}${t.suggested?'<span class="sug">แนะนำเพิ่ม</span>':''}</small></div>
         <div class="t-owner"><input type="text" placeholder="ผู้รับผิดชอบ" value="${esc(t.owner)}" onchange="upTask(${t.id},'owner',this.value)"></div>
