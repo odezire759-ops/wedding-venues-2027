@@ -184,6 +184,42 @@
   .sfield input:focus{outline:none;border-color:var(--gold)}
   .linknote{grid-column:1/-1;background:var(--gold-soft);border-radius:12px;padding:14px 18px;font-size:14.5px;color:#6d5628;line-height:1.7}
   #loading{text-align:center;padding:60px 0;color:var(--ink2)}
+  .printbtn{background:var(--ink);color:#fff;border:none;border-radius:99px;padding:7px 16px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;margin-left:8px}
+  .printbtn:hover{background:#000}
+  #printHeader{display:none}
+  @media print {
+    @page { size: A4; margin: 14mm 12mm }
+    :root { --line: #cccccc }
+    body { font-size: 12pt; color: #000; background: #fff }
+    header, .no-print, nav, .tabs, .filters, .addform, .apactions, .del,
+    .fitbadge, .hd-nav, .btn, .calnav, .chip-sel, .g-rsvp select,
+    #saveState, .printbtn, .controls .seg, #loading { display: none !important }
+    .wrap { max-width: 100%; padding: 0 }
+    main { padding: 0 }
+    #printHeader { display: block; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 2px solid var(--ink) }
+    #printHeader h1 { font-size: 22pt; font-weight: 800; margin-bottom: 4px }
+    #printHeader .meta { font-size: 11pt; color: #333 }
+    .card, .hd-card, .kpi, .titem, .gcard, .mp, .hd-box, .hd-perks, .depcard, .vcard,
+    .hbar, .day, .ap, .progress-card, .sumcard { break-inside: avoid; page-break-inside: avoid; box-shadow: none !important }
+    .card, .hd-card, .kpi, .titem, .gcard, .mp, .hd-box { border: 1px solid var(--line) !important }
+    .hd-band, .vcard { color: #000 !important; background: #f4f4f4 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact }
+    .hd-band .no { background: rgba(0,0,0,.1) !important; color: #000 !important }
+    h1, h2, h3, h4 { break-after: avoid }
+    .hidden { display: block !important }  /* show ALL tabs when printing */
+    .kpi .val, .kpi.hero .val { color: #000 !important; font-size: 24pt }
+    .kpi.hero { background: #f4f4f4 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact }
+    svg, img { max-width: 100% }
+    input, select { border: none !important; background: transparent !important; padding: 0 !important; font-weight: 600 !important; color: #000 !important; -webkit-appearance: none; appearance: none }
+    .titem, .gcard { display: flex !important }
+    .ctl input { border: 1px solid #ccc !important; padding: 4px 8px !important; background: #fff !important }
+    a { color: #000; text-decoration: none }
+    .fine, .sub { color: #444 !important }
+    .bfill, .pfill { -webkit-print-color-adjust: exact; print-color-adjust: exact }
+    #miniPies svg text { fill: #000 !important }
+    /* Add extra spacing before large sections */
+    #vHotel, #vTl, #vCal, #vG, #vSet { page-break-before: always; padding-top: 12px }
+    #vHome { page-break-before: auto }
+  }
 
   /* ---- hotel details (per-hotel cards) ---- */
   .hd-nav{display:flex;gap:6px;flex-wrap:wrap;margin:22px 0 8px}
@@ -227,6 +263,7 @@
     <h1>💍 Wedding Planner <small id="coupleNames">· O & Ae 2027</small></h1>
     <div id="countdown" class="countpill">⏳ กำลังโหลด...</div>
     <div id="saveState"></div>
+    <button class="printbtn no-print" onclick="printPage()" title="พิมพ์แท็บปัจจุบัน (Ctrl+P ก็ได้)">🖨️ พิมพ์</button>
   </div>
   <div class="tabs">
     <button class="on" onclick="tab(this,'vHome')">🏠 ภาพรวม</button>
@@ -239,6 +276,11 @@
 </div></header>
 
 <main><div class="wrap">
+
+<div id="printHeader">
+  <h1>💍 Wedding Planner <span id="printCouple"></span></h1>
+  <div class="meta" id="printMeta"></div>
+</div>
 
 <div id="loading">⏳ กำลังโหลดข้อมูลจาก Supabase...</div>
 
@@ -1007,6 +1049,16 @@ function renderSettings(){
 function tab(btn, id){
   document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on", b===btn));
   for(const v of ["vHome","vHotel","vTl","vCal","vG","vSet"]) document.getElementById(v).classList.toggle("hidden", v!==id);
+}
+function printPage(){
+  // Populate print-only header
+  const nm = [settings.groom_name, settings.bride_name].filter(Boolean).join(" ❤ ");
+  document.getElementById("printCouple").textContent = nm ? "· "+nm : "";
+  const parts = [];
+  if(settings.wedding_date) parts.push("วันแต่งงาน: " + thDate(settings.wedding_date));
+  parts.push("พิมพ์เมื่อ: " + new Date().toLocaleDateString("th-TH", {day:"numeric",month:"long",year:"numeric"}));
+  document.getElementById("printMeta").textContent = parts.join(" · ");
+  window.print();
 }
 
 loadAll();
