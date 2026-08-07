@@ -570,7 +570,31 @@
   .catrow.sel{outline:none}
 }
 </style>
-
+<style id="myPhotos">
+@media screen{
+  .myph{margin:18px 0 4px;border-top:2px dashed #f8cfdd;padding-top:14px}
+  .myph-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+  .myph-head h4{margin:0;font-size:16px;color:var(--ink)}
+  .myph-add{border:none;background:linear-gradient(120deg,#e0447c,#f472a8);color:#fff;border-radius:999px;padding:8px 16px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(224,68,124,.25);transition:transform .15s}
+  .myph-add:hover{transform:translateY(-1px)}
+  .myph-add:disabled{opacity:.6;cursor:wait;transform:none}
+  .myph-hint{font-size:12.5px;color:var(--ink2)}
+  .myph-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+  .myph-it{position:relative;border-radius:14px;overflow:hidden;background:#fff0f5;border:1.5px solid #f8cfdd;box-shadow:0 2px 8px rgba(224,68,124,.08);margin:0}
+  .myph-it img{width:100%;height:110px;object-fit:cover;display:block;cursor:zoom-in;background:#ffe3ee}
+  .myph-cap{font-size:12px;color:var(--ink2);padding:6px 8px;cursor:text;min-height:26px}
+  .myph-cap.empty{color:#d8a7ba;font-style:italic}
+  .myph-cap input{width:100%;border:1px solid #f0a8c4;border-radius:8px;padding:4px 6px;font-family:inherit;font-size:12px;background:#fff}
+  .myph-x{position:absolute;top:6px;right:6px;border:none;background:rgba(255,255,255,.92);color:#c2255c;width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:13px;line-height:1;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+  .myph-x.arm{background:#c2255c;color:#fff;width:auto;padding:0 10px;border-radius:999px;font-size:12px;font-weight:700}
+  .myph-empty{font-size:13.5px;color:var(--ink2);background:#fff7fa;border:1.5px dashed #f3b8cd;border-radius:12px;padding:14px;text-align:center}
+  #phLight{position:fixed;inset:0;background:rgba(40,10,25,.88);z-index:99;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;cursor:zoom-out}
+  #phLight img{max-width:94vw;max-height:82vh;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.5)}
+  #phLight .cap{color:#ffe3ee;font-size:15px;text-align:center}
+  #phLight.hidden{display:none}
+}
+@media print{ .myph,#phLight{display:none!important} }
+</style>
 
 </head>
 <body>
@@ -690,6 +714,7 @@
       </div>
     </div>
     <div class="hd-perks">🎁 <b>ของแถมเมื่อถึงขั้นต่ำ:</b> พัก Junior River View Suite (Anantara) หรือ Avani Riverview Jr. Suite 1 คืน + อาหารเช้า · soft drink free-flow ตลอดงาน · เค้กหลอก 5–7 ชั้น + เค้กจริง 20 ชิ้น · ไฟ-เสียงมาตรฐาน (Avani+ มี LED) · ดอกไม้มาตรฐานครบ · มาลัยคู่ · สปาร์กลิงไวน์ 1 ขวด — <b>ยอด 450,000/800,000 ขึ้นไป</b> เพิ่ม voucher ร้าน Seen, แพ็กเกจครบรอบ 1 ปี พร้อมสปา 60 นาที</div>
+    <div class="myph" data-hotel="anantara" data-hn="Anantara / Avani+ Riverside"></div>
     <div class="hd-contact"><span>🏨 <b>ฝ่ายขายงานแต่งงาน</b></span><span>📞 02 476 0022</span><span>⏳ ราคายืนถึง 30 ส.ค. 2029</span></div>
   </div>
 </div>
@@ -733,6 +758,7 @@
       </div>
     </div>
     <div class="hd-perks">🎁 <b>โปรโมชัน 2026:</b> Triple Marriott Bonvoy Points (สูงสุด 60,000 แต้ม) · เลือกสิทธิพิเศษ 1 อย่างต่อทุกยอด 100,000 สูงสุด 5 สิทธิ์ (พัก M Club · สปา 1 ชม. · ซื้อเบียร์ช้าง 1 ถังแถม 1 · หอแชมเปญ · ฟรีค่านำเข้าตกแต่งทั้งหมด) · <b>บัตร KTC:</b> ยอด ≥500,000 รับห้อง Deluxe ฟรีอีก 1 คืนวันงาน</div>
+    <div class="myph" data-hotel="marriott" data-hn="Marriott Marquis"></div>
     <div class="hd-contact"><span>🏨 <b>ฝ่ายขายงานแต่งงาน</b></span><span>📞 02 059 5555</span><span>⏳ ราคายืนถึง 28 ส.ค. 2026</span></div>
   </div>
 </div>
@@ -771,6 +797,7 @@
       </div>
     </div>
     <div class="hd-perks">🎁 <b>ของแถมตามแพ็กเกจ:</b> เค้กแต่งงาน 7 ชั้นพร้อมตกแต่ง · แบ็คดรอปชื่อบนเวที · แสตนด์ดอกไม้ + ดอกไม้ขอบเวที · แจกันโต๊ะรับรอง-โต๊ะอาหาร · ช่อเจ้าสาว มาลัยคู่ corsage · ห้อง Executive Deluxe สำหรับคืนวันงาน (ตามแพ็กเกจ)</div>
+    <div class="myph" data-hotel="eastin" data-hn="Eastin Grand Sathorn"></div>
     <div class="hd-contact"><span>🏨 <b>Eastin Grand Sathorn</b></span><span>📞 02 210 8100</span><span>🌐 eastingrandsathorn.com</span><span>⏳ อัตราปี 2026 (07.2026)</span></div>
   </div>
 </div>
@@ -808,6 +835,7 @@
       </div>
     </div>
     <div class="hd-perks">🎁 <b>แพ็กเกจงานเลี้ยงรวม:</b> <b>LED wall ยักษ์ 15.5 × 5.0 เมตร</b> (จุดเด่นสุด) · พัก Wellness Suite 1 คืน + อาหารเช้า · สปา 60 นาที 2 ท่าน · dining voucher 4,000 · สมุดอวยพร มาลัยคู่ เค้กหลอกพร้อมดอกไม้ · ห้องแต่งตัว 6 ชม.</div>
+    <div class="myph" data-hotel="mvp" data-hn="Mövenpick BDMS"></div>
     <div class="hd-contact"><span>🏨 <b>ฝ่ายขายงานแต่งงาน</b></span><span>📞 02 666 3333</span><span>⏳ ราคายืนถึง 17 ส.ค. 2026</span></div>
   </div>
 </div>
@@ -1440,8 +1468,116 @@ function printPage(){
   window.print();
 }
 
+/* ---------- my photos (รูปที่ถ่ายเอง · Supabase Storage) ---------- */
+let photos = [];
+const PH_OBJ = SB_URL + "/storage/v1/object/wedding-photos/";
+const PH_PUB = SB_URL + "/storage/v1/object/public/wedding-photos/";
+
+async function loadPhotos(){
+  try{ photos = await api("wedding_photos?select=*&order=created_at.asc") || []; }
+  catch(e){ console.error("loadPhotos", e); photos = []; }
+  renderPhotos();
+}
+function renderPhotos(){
+  document.querySelectorAll(".myph").forEach(box=>{
+    const hk = box.dataset.hotel, hn = box.dataset.hn;
+    const mine = photos.filter(p=>p.hotel===hk);
+    const g = mine.length ? `<div class="myph-grid">` + mine.map(p=>`
+      <figure class="myph-it" data-id="${p.id}">
+        <img loading="lazy" src="${PH_PUB+esc(p.path)}" alt="${esc(p.caption||'')}" onclick="phView(${p.id})">
+        <figcaption class="myph-cap ${p.caption?"":"empty"}" onclick="phCap(${p.id},this)">${p.caption?esc(p.caption):"แตะเพื่อใส่คำบรรยาย ✏️"}</figcaption>
+        <button class="myph-x" onclick="phDel(${p.id},this)" title="ลบรูป">✕</button>
+      </figure>`).join("") + `</div>`
+      : `<div class="myph-empty">ยังไม่มีรูปของเราเอง — กด "➕ เพิ่มรูป" เพื่ออัปโหลดรูปที่ไปดู ${esc(hn)} มา 📷</div>`;
+    box.innerHTML = `
+      <div class="myph-head">
+        <h4>📷 รูปที่เราไปดูมาเอง <small style="color:var(--ink2);font-weight:400">(${mine.length} รูป)</small></h4>
+        <button class="myph-add" onclick="this.nextElementSibling.click()">➕ เพิ่มรูป</button>
+        <input type="file" accept="image/*" multiple hidden onchange="phUpload('${hk}',this)">
+        <span class="myph-hint">เลือกได้หลายรูป · ย่อขนาดอัตโนมัติ</span>
+      </div>` + g;
+  });
+}
+function shrinkImg(file){
+  return new Promise((res)=>{
+    const img = new Image();
+    img.onload = ()=>{
+      const M = 1600; let w=img.naturalWidth, h=img.naturalHeight;
+      if(Math.max(w,h) > M){ const k = M/Math.max(w,h); w = Math.round(w*k); h = Math.round(h*k); }
+      const c = document.createElement("canvas"); c.width=w; c.height=h;
+      c.getContext("2d").drawImage(img,0,0,w,h);
+      URL.revokeObjectURL(img.src);
+      c.toBlob(b=>res(b||file), "image/jpeg", 0.82);
+    };
+    img.onerror = ()=>{ URL.revokeObjectURL(img.src); res(file); };
+    img.src = URL.createObjectURL(file);
+  });
+}
+async function phUpload(hotel, inp){
+  const files = [...inp.files]; if(!files.length) return;
+  const btn = inp.previousElementSibling;
+  btn.disabled = true; setSave("saving");
+  let ok = 0;
+  for(let i=0;i<files.length;i++){
+    btn.textContent = `⏳ อัปโหลด ${i+1}/${files.length}...`;
+    try{
+      const blob = await shrinkImg(files[i]);
+      const path = hotel+"/"+Date.now()+"_"+Math.random().toString(36).slice(2,7)+".jpg";
+      const up = await fetch(PH_OBJ+path, {method:"POST", headers:{apikey:SB_KEY, Authorization:"Bearer "+SB_KEY, "Content-Type": blob.type||"image/jpeg"}, body: blob});
+      if(!up.ok) throw new Error(await up.text());
+      const r = await api("wedding_photos", {method:"POST", headers:{Prefer:"return=representation"}, body: JSON.stringify({hotel, path})});
+      if(r && r[0]) photos.push(r[0]);
+      ok++;
+    }catch(e){ console.error("upload fail", e); }
+  }
+  inp.value = "";
+  btn.disabled = false; btn.textContent = "➕ เพิ่มรูป";
+  setSave(ok===files.length ? "saved" : "error");
+  renderPhotos();
+}
+function phCap(id, el){
+  if(el.querySelector("input")) return;
+  const p = photos.find(x=>x.id===id); if(!p) return;
+  el.classList.remove("empty");
+  el.innerHTML = `<input type="text" value="${esc(p.caption||"")}" placeholder="คำบรรยาย เช่น ห้องบอลรูมชั้น 2..." maxlength="120">`;
+  const inp = el.querySelector("input"); inp.focus();
+  inp.addEventListener("keydown", e=>{ if(e.key==="Enter") inp.blur(); });
+  inp.addEventListener("blur", async ()=>{
+    const v = inp.value.trim();
+    p.caption = v; setSave("saving");
+    try{ await api("wedding_photos?id=eq."+id, {method:"PATCH", body: JSON.stringify({caption:v})}); setSave("saved"); }
+    catch(e){ console.error(e); }
+    renderPhotos();
+  }, {once:true});
+}
+async function phDel(id, btn){
+  if(!btn.classList.contains("arm")){
+    btn.classList.add("arm"); btn.textContent = "ลบรูปนี้?";
+    setTimeout(()=>{ btn.classList.remove("arm"); btn.textContent = "✕"; }, 2500);
+    return;
+  }
+  const p = photos.find(x=>x.id===id); if(!p) return;
+  setSave("saving");
+  try{
+    await fetch(PH_OBJ+p.path, {method:"DELETE", headers:{apikey:SB_KEY, Authorization:"Bearer "+SB_KEY}});
+    await api("wedding_photos?id=eq."+id, {method:"DELETE"});
+    photos = photos.filter(x=>x.id!==id);
+    setSave("saved");
+  }catch(e){ console.error(e); }
+  renderPhotos();
+}
+function phView(id){
+  const p = photos.find(x=>x.id===id); if(!p) return;
+  const L = document.getElementById("phLight");
+  L.innerHTML = `<img src="${PH_PUB+esc(p.path)}" alt="">` + (p.caption ? `<div class="cap">${esc(p.caption)}</div>` : "");
+  L.classList.remove("hidden");
+}
+function phClose(){ document.getElementById("phLight").classList.add("hidden"); }
+
 loadAll();
+loadPhotos();
 </script>
+<div id="phLight" class="hidden" onclick="phClose()"></div>
 <div id="floaty"></div>
 <script>
 (function(){
