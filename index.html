@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Wedding Planner · O & Ae 2027</title>
+<title>💕 Wedding Planner · O & Ae 2027</title>
 <style>
   :root{
     --bg:#ffffff; --card:#ffffff; --line:#e9e6e1; --ink:#1c1917; --ink2:#6b6560;
@@ -256,11 +256,289 @@
   .price-g{color:var(--green);font-weight:800}
 
 </style>
+<style id="cuteTheme">
+@import url('https://fonts.googleapis.com/css2?family=Mali:wght@400;600;700&display=swap');
+/* ============================================================
+   theme_cute_core.css · Wedding Planner "cute cartoon pink" theme
+   CORE-UI overrides only. Must load as its OWN stylesheet (a new
+   style tag or a link) appended AFTER the app's existing styles —
+   equal-specificity selectors then win by cascade order.
+   Out of scope here (handled by another agent): .controls .hbar
+   .track .bfill .fitbadge .budgetline .minipies .mp .hd-* and the
+   existing @media print block, which is left untouched.
+   ============================================================ */
+
+/* Base (all media): the decorative floaty layer is screen-only, so
+   print and every other medium never render the injected emojis. */
+#floaty{display:none}
+
+@media screen{
+
+  /* ---------- palette (approved, colorblind-validated) ---------- */
+  :root{
+    --bg:#fff5f8; --card:#ffffff; --line:#ffd9e5; --ink:#4a2b38; --ink2:#a06c85;
+    --gold:#e0447c; --gold-soft:#ffe3ee; --rose:#ff9fbe;
+    --s1:#e0447c; --s2:#8a63d2; --s3:#2f9e8f; --neutral:#e9d3dc; --danger:#c2185b;
+    --green:#2f9e8f; --amber:#8a63d2;
+  }
+
+  /* ---------- base ---------- */
+  body{font-family:'Mali','Sarabun',sans-serif;background:var(--bg);color:var(--ink)}
+
+  /* ---------- floating hearts layer (markup: see PATCHES-FOR-INTEGRATOR at end) ---------- */
+  #floaty{display:block;position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+  #floaty span{position:absolute;font-size:22px;opacity:.35;animation:floatUp linear infinite}
+  @keyframes floatUp{
+    0%{transform:translateY(105vh) rotate(0deg)}
+    100%{transform:translateY(-8vh) rotate(30deg)}
+  }
+  main{position:relative;z-index:1}
+  /* header is intentionally NOT switched to position:relative — the app's
+     header is position:sticky + z-index:50, which already stacks it above
+     #floaty (z-index:0) while keeping the sticky behaviour intact. */
+
+  /* ---------- header ---------- */
+  header{border-bottom:2px dashed var(--line);background:rgba(255,245,248,.95)}
+  .tabs button.on{color:var(--gold);border-color:var(--gold)}
+  .countpill{background:var(--gold-soft);color:var(--gold)}
+  #saveState{color:var(--ink2)}
+  .printbtn{background:var(--gold)}
+  .printbtn:hover{background:#b3134f}
+
+  /* ---------- section titles: blossoms, mockup-style ---------- */
+  h2.sec::before{content:"🌸";margin-right:8px}
+  h2.sec::after{content:"🌸";margin-left:8px}
+
+  /* ---------- cards & KPIs ---------- */
+  .kpi{border:2px solid var(--line);border-radius:24px;background:#fff;box-shadow:0 4px 14px rgba(224,68,124,.08)}
+  .card{border:2px solid var(--line);border-radius:24px;background:var(--card);box-shadow:0 4px 14px rgba(224,68,124,.08)}
+  .kpi.hero{background:linear-gradient(140deg,#ffe9f1,#ffd9e5);border-color:#ffb8d0}
+  /* KPI values stay dark, readable ink; .kpi.hero .val keeps its pink via the
+     app's own higher-specificity rule (now resolving to the new --gold). */
+  .kpi .val{color:var(--ink)}
+
+  /* ---------- timeline ---------- */
+  .tl-head .bar i{background:var(--s1)}
+  .titem{border:2px solid var(--line);border-radius:20px;background:#fff}
+  .titem:hover{border-color:var(--rose)}
+  .chk{width:30px;height:30px;border-radius:50%;border:2px solid #ffb8d0;font-size:16px}
+  /* The app's JS inserts a "✓" text node inside .chk when done; font-size:0
+     collapses it so only the 💖 pseudo-element (explicit 16px) is visible. */
+  .titem.done .chk{background:#ffe3ee;border-color:var(--gold);font-size:0}
+  .titem.done .chk::before{content:"💖";font-size:16px}
+  .t-name input:focus{background:#fff8fb}
+  .del:hover{color:var(--danger);background:#ffe4ee}
+
+  /* status chips: pink/purple family, kept visually distinct */
+  .st-done{background:#ffe3ee;color:#b3134f}
+  .st-doing{background:#eee7fb;color:#5b3fa8}
+  .st-todo{background:#f5eaef;color:#a06c85}
+  .st-skip{background:#f7f1f4;color:#b299a5}
+
+  /* ---------- guests ---------- */
+  .gcard{border:2px solid var(--line);border-radius:20px;background:#fff}
+  .avatar{background:linear-gradient(140deg,#ffe3ee,#ffd0e0);color:var(--gold);border:2px solid #ffb8d0}
+  .evtag.on{background:var(--gold-soft);border-color:#ffb8d0;color:var(--gold)}
+  .g-name input:focus{background:#fff8fb}
+
+  /* ---------- calendar / appointments ---------- */
+  .day{border:2px solid var(--line);border-radius:16px}
+  .day:hover{border-color:var(--gold);background:#fff8fb}
+  .day.today{border:2.5px solid var(--gold);background:var(--gold-soft)}
+  .day.wed{background:#ffe3ee;border-color:var(--gold)}
+  .apdate{background:var(--gold-soft)}
+  .apactions button:hover{background:#ffeef5}
+  .addform{border:1.5px dashed var(--gold);background:#fffafc}
+
+  /* ---------- buttons ---------- */
+  .btn{border-color:var(--gold);color:var(--gold)}
+  .btn:hover{background:var(--gold-soft)}
+  .btn.solid{background:var(--gold);color:#fff}
+
+  /* ---------- settings ---------- */
+  .sfield input:focus{border-color:var(--gold)}
+  .linknote{background:var(--gold-soft);color:#8a3557}
+
+} /* end @media screen */
+
+
+
+
+/* ===== hotel/chart/print overrides ===== */
+/* =====================================================================
+   theme_cute_hotel.css — "Cute Cartoon Pink" theme (hotel & budget focus)
+   Wedding Planner · O & Ae 2027
+   ---------------------------------------------------------------------
+   HOW TO LOAD (integrator): add AFTER the inline <style> block in <head>
+   of /wedding/web/real/index.html — append-after semantics: every rule
+   here has equal (or higher) specificity than the original and wins by
+   source order. index.html itself is NOT modified by this file.
+
+     <link rel="stylesheet" href="theme_cute_hotel.css">
+
+   Palette (validated colorblind-safe — used exactly):
+     pink      #e0447c    lavender  #8a63d2    teal      #2f9e8f
+     line      #ffd9e5    soft pink #ffe3ee    bg        #fff5f8
+     ink       #4a2b38    ink2      #a06c85    danger    #c2185b
+   ===================================================================== */
+
+/* Cute rounded Thai font (mockup look reference uses 'Mali'). */
+
+@media screen {
+
+  /* ---- palette variables ------------------------------------------ */
+  /* Redefining :root makes every var(--...) usage in the app pick up the
+     cute palette automatically — including the renderDashboard() donut
+     calls (c:"var(--s1)" / "var(--s2)" / "var(--s3)" / "var(--neutral)")
+     and the "แยกส่วน:" legend paragraph's inline var(--s1..s3) styles.
+     Those need NO JS patch. Only raw hex literals in JS do — see the
+     JS-PATCHES-FOR-INTEGRATOR block at the end of this file. */
+  :root{
+    --bg:#fff5f8;          /* page background — pastel pink */
+    --line:#ffd9e5;        /* borders / dividers */
+    --ink:#4a2b38;         /* main text — warm plum-brown */
+    --ink2:#a06c85;        /* secondary text — pink-gray */
+    --gold:#e0447c;        /* accent: gold -> pink everywhere */
+    --gold-soft:#ffe3ee;   /* soft accent fill */
+    --danger:#c2185b;      /* wedding-friendly "red" */
+    --green:#17695c;       /* fit-ok / price-g / saved-state text */
+    --neutral:#e9d3dc;     /* donut "ยังไม่เริ่ม / ไม่มา" slice (from mockup) */
+    --s1:#e0447c;          /* slice 1 — งานหมั้น (pink) */
+    --s2:#8a63d2;          /* slice 2 — อาหารงานเลี้ยง (lavender) */
+    --s3:#2f9e8f;          /* slice 3 — ส่วนต่างขั้นต่ำ (teal) */
+  }
+
+  /* Cute handwriting-style Thai font on screen only (print block below
+     forces Sarabun back for readability). */
+  body{font-family:'Mali','Sarabun','Prompt','Segoe UI',sans-serif}
+
+  /* ---- .controls (guest / budget / menu inputs) -------------------- */
+  .controls{background:#fff;border:2px solid #ffd9e5;border-radius:24px}
+  .ctl input:focus{border-color:#e0447c}
+  .seg button.on{background:#e0447c;color:#fff}
+
+  /* ---- hotel cost bars --------------------------------------------- */
+  .hbar .nm small{color:#a06c85}
+  .hbar.sel .nm{color:#e0447c}
+  .track{background:#fdeef4;border-radius:12px}
+  .bfill{background:linear-gradient(90deg,#e0447c,#ff7fab);border-radius:12px 6px 6px 12px}
+  .bfill.over{background:#c2185b}   /* solid — overrides the gradient */
+  /* fit badges — used by both .fitbadge (bars) and .mp .fit (mini pies) */
+  .fit-ok{background:#e5f5f1;color:#17695c}
+  .fit-no{background:#fde3ef;color:#b3134f}
+  /* budget dashed marker — darker ink + slightly higher opacity to stay
+     clearly visible on the pink track */
+  .budgetline{border-left:2.5px dashed #4a2b38;opacity:.65}
+  .budgetline span{color:#4a2b38}
+
+  /* ---- mini pie cards (.minipies grid) ----------------------------- */
+  .mp{border:2px solid #ffd9e5;border-radius:20px}
+  .mp:hover{border-color:#e0447c;background:#fff5f8}
+  .mp.sel{border:2.5px solid #e0447c;background:#ffe3ee}
+
+  /* ---- hotel detail cards ------------------------------------------ */
+  .hd-nav a:hover{border-color:#e0447c;color:#e0447c;background:#ffe3ee}
+  .hd-card{border:2px solid #ffd9e5;border-radius:22px;box-shadow:0 6px 18px rgba(224,68,124,.10)}
+  /* .hd-band — intentionally NOT overridden: the four inline gradients
+     (Anantara gold #8a6d3b→#b08d57, Marriott plum #7c2d5e→#a34a80,
+     Eastin blue #1d5c7a→#3585ab, Mövenpick #9a3412→#c2571f) are per-hotel
+     BRAND colors and stay as-is per design decision. */
+  .hd-box{background:#fffafc;border-color:#ffd9e5}
+  .hd-box h4{color:#e0447c}
+  .hd-box li::before{content:"🌸";font-size:10px}   /* replaces "✦" bullet */
+  .hd-kv{border-bottom:1px dashed #ffd9e5}
+  /* (original .hd-kv:last-child{border-bottom:none} still wins — higher
+     specificity — so the last row stays borderless) */
+  .hd-perks{background:#ffe9f1;color:#8c3a5c}
+  .price-g{color:#17695c}
+
+} /* end @media screen */
+
+/* =====================================================================
+   PRINT — minimal additions only. The existing @media print block inside
+   index.html (page setup, hides, break rules, band flattening, print
+   color-adjust) is kept fully intact and is NOT redefined here.
+   ===================================================================== */
+@media print {
+  /* (a) hide the floating hearts/flowers background layer.
+     #floaty does not exist in the current production HTML — it comes from
+     the cute mockup; this rule is a safe no-op today and future-proofs
+     print if the integrator ports the floaty layer over. */
+  #floaty{display:none !important}
+  /* (b) force the body font back to Sarabun for print readability
+     (screen-only 'Mali' above never reaches print, this pins it). */
+  body{font-family:'Sarabun',sans-serif}
+  /* (c) nothing else — all other print rules remain the originals. */
+}
+
+/* =====================================================================
+   JS-PATCHES-FOR-INTEGRATOR
+   =====================================================================
+   The mini-pie slice colors are hardcoded as hex strings in the JS of
+   index.html and CANNOT be themed from CSS. Apply these exact string
+   replacements in index.html (this CSS file must not touch it):
+
+     "#2a78d6" -> "#e0447c"   (slice/legend: งานหมั้น)
+     "#eb6834" -> "#8a63d2"   (slice/legend: อาหารงานเลี้ยง)
+     "#1baf7a" -> "#2f9e8f"   (slice/legend: ส่วนต่างขั้นต่ำ)
+
+   VERIFY COUNT: each hex occurs exactly 3 times in index.html
+   (9 occurrences total, none uppercase, none in shorthand/rgb form).
+   A blanket find-and-replace hits all of the following:
+
+   ── "#2a78d6" — 3 occurrences ─────────────────────────────────────────
+   1. Line 11   · CSS :root variable defs:
+        "--s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a;"
+      -> OPTIONAL: this CSS override file already redefines --s1..--s3 on
+         screen; replacing here too is harmless and keeps the source
+         consistent (and themes any future non-screen var usage).
+   2. Line 584  · JS CATS_A appointment-category map:
+        const CATS_A = {hotel:{l:"🏨 โรงแรม",c:"#e0447c"}, ...
+      -> CAUTION: this is NOT a pie slice — it colors calendar event dots
+         (.evdot) and appointment badges (.apcat) for the "โรงแรม"
+         category. Replacing makes hotel appointments pink — consistent
+         with the theme, but verify you want appointment colors re-themed.
+   3. Line 808  · JS mini-pie "parts = [" array (hotel bars renderer):
+        {v: c.engCost, c: "#e0447c"},        // งานหมั้น slice
+      -> REQUIRED: feeds miniPieSvg(parts) at line 812.
+
+   ── "#eb6834" — 3 occurrences ─────────────────────────────────────────
+   1. Line 11   · CSS :root "--s2:#eb6834"            -> OPTIONAL (as above)
+   2. Line 584  · JS CATS_A: dress:{l:"👗 ชุด",c:"#8a63d2"}
+      -> CAUTION: appointment "ชุด" category dots/badges become lavender.
+   3. Line 809  · JS mini-pie parts array:
+        {v: c.food, c: "#8a63d2"},           // อาหารงานเลี้ยง slice
+      -> REQUIRED.
+
+   ── "#1baf7a" — 3 occurrences ─────────────────────────────────────────
+   1. Line 11   · CSS :root "--s3:#1baf7a"            -> OPTIONAL (as above)
+   2. Line 584  · JS CATS_A: photo:{l:"📷 ถ่ายภาพ",c:"#2f9e8f"}
+      -> CAUTION: appointment "ถ่ายภาพ" category dots/badges become teal.
+   3. Line 810  · JS mini-pie parts array:
+        ...(topup>0 ? [{v: topup, c: "#2f9e8f"}] : []),   // ส่วนต่างขั้นต่ำ
+      -> REQUIRED.
+
+   ── NO PATCH NEEDED (already handled by this CSS file) ────────────────
+   · renderDashboard() donut calls, lines 673-680: use c:"var(--s1)",
+     c:"var(--s2)", c:"var(--s3)", c:"var(--neutral)" — fine as-is; they
+     pick up the :root override above.
+   · Legend text in the "แยกส่วน:" paragraph, line 327: inline
+     style="color:var(--s1)" / var(--s2) / var(--s3) — fine as-is.
+   · .tl-head .bar i (line 101) and .titem.done .chk (line 108): use
+     var(--s1) — fine as-is.
+   · miniPieSvg() itself (line 826) takes colors from its parts argument;
+     its only literal is the "#eee" empty-state circle — leave it.
+   · CATS_A also contains food:"#eda100" and other:"#8a8580" — not part of
+     this patch set; they remain amber/gray and read fine on the pink UI.
+   ===================================================================== */
+
+</style>
+
 </head>
 <body>
 <header><div class="wrap">
   <div class="head-top">
-    <h1>💍 Wedding Planner <small id="coupleNames">· O & Ae 2027</small></h1>
+    <h1>👰🏻‍♀️💕 Wedding Planner 🤵🏻 <small id="coupleNames">· O & Ae 2027</small></h1>
     <div id="countdown" class="countpill">⏳ กำลังโหลด...</div>
     <div id="saveState"></div>
     <button class="printbtn no-print" onclick="printPage()" title="พิมพ์แท็บปัจจุบัน (Ctrl+P ก็ได้)">🖨️ พิมพ์</button>
@@ -288,19 +566,19 @@
 <div id="vHome" class="hidden">
   <div class="kpis" id="kpiRow"></div>
   <div class="grid2" style="margin-top:16px">
-    <div class="card"><h3>ความคืบหน้างานทั้งหมด</h3>
+    <div class="card"><h3>🧁 ความคืบหน้างานทั้งหมด</h3>
       <div class="donutrow"><svg id="donutTasks" width="170" height="170" viewBox="0 0 170 170"></svg><div class="legend" id="legTasks"></div></div>
     </div>
-    <div class="card"><h3>การตอบรับของแขก · งานเลี้ยง</h3>
+    <div class="card"><h3>💌 การตอบรับของแขก · งานเลี้ยง</h3>
       <div class="donutrow"><svg id="donutRsvp" width="170" height="170" viewBox="0 0 170 170"></svg><div class="legend" id="legRsvp"></div></div>
     </div>
   </div>
   <div class="card" style="margin-top:16px">
-    <h3>งบประมาณ</h3>
+    <h3>🐷 กระปุกงบประมาณ</h3>
     <div id="budgetInfo"></div>
   </div>
   <div class="card" style="margin-top:16px">
-    <h3>นัดหมายที่กำลังจะถึง</h3>
+    <h3>💌 นัดหมายที่กำลังจะถึง</h3>
     <div id="upcomingAps"></div>
   </div>
 </div>
@@ -581,7 +859,7 @@ const STATUSES = ["ยังไม่เริ่ม","กำลังทำ","�
 const SIDES = ["","ฝ่ายเจ้าบ่าว (พ่อ-แม่)","ฝ่ายเจ้าบ่าว (ส่วนตัว)","ฝ่ายเจ้าสาว (พ่อ-แม่)","ฝ่ายเจ้าสาว (ส่วนตัว)"];
 const TIERS = ["Tier 1 - VIP","Tier 2 - สำคัญ","Tier 3 - ทั่วไป"];
 const RSVPS = ["ยังไม่ตอบ","ยืนยันมา","ไม่มา"];
-const CATS_A = {hotel:{l:"🏨 โรงแรม",c:"#2a78d6"}, dress:{l:"👗 ชุด",c:"#eb6834"}, photo:{l:"📷 ถ่ายภาพ",c:"#1baf7a"}, food:{l:"🍜 อาหาร",c:"#eda100"}, other:{l:"📌 อื่นๆ",c:"#8a8580"}};
+const CATS_A = {hotel:{l:"🏨 โรงแรม",c:"#e0447c"}, dress:{l:"👗 ชุด",c:"#8a63d2"}, photo:{l:"📷 ถ่ายภาพ",c:"#2f9e8f"}, food:{l:"🍜 อาหาร",c:"#c98a2c"}, other:{l:"📌 อื่นๆ",c:"#8a8580"}};
 const HOTELS = [
  {k:"eastin",   n:"Eastin Grand",      sub:"Surasak Ballroom",       eng:45000, extra:530, buffet:1600, table:21500, min:350000, note:"เครดิตคืน 10%"},
  {k:"mvp",      n:"Mövenpick BDMS",    sub:"Harmony Ballroom",       eng:70000, extra:850, buffet:1700, table:20000, min:550000, note:""},
@@ -805,9 +1083,9 @@ function renderHotelBars(){
     const c = costOf(h, engG, recG);
     const topup = Math.max(0, h.min - c.food);
     const parts = [
-      {v: c.engCost, c: "#2a78d6"},
-      {v: c.food, c: "#eb6834"},
-      ...(topup>0 ? [{v: topup, c: "#1baf7a"}] : []),
+      {v: c.engCost, c: "#e0447c"},
+      {v: c.food, c: "#8a63d2"},
+      ...(topup>0 ? [{v: topup, c: "#2f9e8f"}] : []),
     ];
     const svg = miniPieSvg(parts);
     const fit = bud ? (c.total>bud ? `<span class="fit fit-no">เกินงบ +${fmt(c.total-bud)}</span>` : `<span class="fit fit-ok">ในงบ ✓</span>`) : "";
@@ -930,7 +1208,7 @@ function renderCal(){
     const cls = ["day", dt===todayIso?"today":"", dt===settings.wedding_date?"wed":""].join(" ");
     html += `<div class="${cls}" onclick="pickDay('${dt}')">
       <div class="dn">${d}</div>
-      ${dt===settings.wedding_date?'<span class="wedlab">💍 วันงาน</span>':''}
+      ${dt===settings.wedding_date?'<span class="wedlab">💒 วันงาน 💕</span>':''}
       ${evs.slice(0,2).map(e=>`<span class="evdot" style="background:${CATS_A[e.category]?.c||'#888'}">${(e.ap_time||"").slice(0,5)} ${esc(e.title)}</span>`).join("")}
       ${evs.length>2?`<span class="evdot" style="background:#8a8580">+${evs.length-2} นัด</span>`:""}
     </div>`;
@@ -1062,6 +1340,20 @@ function printPage(){
 }
 
 loadAll();
+</script>
+<div id="floaty"></div>
+<script>
+(function(){
+  var EMO=["💕","🌸","💗","🌷","💖","🩷","🌺","✿"];
+  var el=document.getElementById('floaty');
+  if(!el)return;
+  var h=[];
+  for(var i=0;i<18;i++){
+    var left=(i*53)%100, dur=14+(i*7)%18, delay=-((i*5)%20), size=16+(i*11)%18;
+    h.push('<span style="left:'+left+'vw;font-size:'+size+'px;animation-duration:'+dur+'s;animation-delay:'+delay+'s">'+EMO[i%EMO.length]+'</span>');
+  }
+  el.innerHTML=h.join('');
+})();
 </script>
 </body>
 </html>
